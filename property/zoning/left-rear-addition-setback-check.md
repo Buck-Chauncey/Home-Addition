@@ -2,57 +2,42 @@
 
 **Proposal:** 2-story addition at left rear of house, **14′ wide × 16′ deep**, staying flush with the existing left wall.
 
-**Street orientation:** Facing the house from Panama Ave, **left = north** side yard.
+## Measured left side setback (owner)
 
-## Existing left-wall setback (approximate)
+| Item | Value |
+| --- | --- |
+| Left wall to parcel boundary | **52.5 inches (4.375′)** |
+| Wall runs | Parallel to parcel boundary |
+| Prior OSM/GIS estimate | ~3.2′ (superseded by measurement) |
 
-From county/city GIS + OSM building footprint (not a survey):
+## RL2 requirement vs measurement
 
-| Measurement | Approx. value | RL2 required |
-| --- | --- | --- |
-| Left (north) side setback | **~3.2′** | 5′ ground / 9′ upper |
-| Right (south) side setback | **~3.2′** | 5′ ground / 9′ upper |
-| Front setback (OSM — may include porch / be inaccurate) | ~5.4′ | 20′ (or block average) |
-| Rear yard remaining today | ~60.1′ | 20′ (or 10′ if eligible) |
-
-Your read that the house sits too close is consistent with the GIS/OSM estimate (~3′ side yards on a ~50′ lot). **Measure on site** before relying on this number.
+| Standard | Required | Measured / proposed | Status |
+| --- | --- | --- | --- |
+| Side yard — ground floor | **5.0′ (60″)** | **4.375′ (52.5″)** | **Short by 7.5″** |
+| Side yard — second story | **9.0′ (108″)** | **4.375′** if flush | **Short by ~4.6′** |
 
 ## Can you stay flush?
 
-**Not as-of-right.**
+**Still not as-of-right**, but it is much closer than the map suggested.
 
-1. **Current RL2 setbacks** (RMC 15.04.201.030): ground floor **5′**, second story **9′** from the side property line.
-2. **Residential enlargements must meet current standards** (RMC 15.04.606.030.B): even if the old house is allowed to remain, *new* floor area generally has to comply with today’s setbacks.
-3. A flush 2-story wall at ~3.2′ would miss both the 5′ and 9′ requirements.
+- A flush **ground-floor** wall would be only **7.5″** into the required 5′ side yard.
+- A flush **second story** would still be far inside the required **9′** side yard.
+- RMC 15.04.606.030.B: residential enlargements must meet current standards.
+- Possible discretionary relief: AUP under 15.04.606.070.C.2 and/or variance — confirm with Richmond Planning.
 
-### Possible discretionary paths (not guaranteed)
+## Conforming alternative
 
-- **RMC 15.04.606.070.C.2** — Zoning Administrator *may* allow an enlargement into a nonconforming yard with an **administrative use permit** if it does **not further reduce** the nonconforming yard (i.e., no closer to the property line than the existing wall), and other limits are met. This is discretionary, and a brand-new 2-story rear wing in that side yard is a harder ask than a minor in-fill.
-- Otherwise you would be looking at a **variance**, which Richmond often resists when a conforming design is feasible (pulling the wall in).
+- Ground floor: pull left wall in by **7.5″** (to the 5′ line) — small jog off the existing wall.
+- Second story: further inset to the **9′** line (about **4.6′** in from the existing wall), or keep the whole 2-story mass at 9′.
 
-**Practical expectation:** plan the addition to the **5′ / 9′** lines (or confirm a formal exception with Planning), not flush.
-
-## Your 14′ × 16′ box otherwise
+## Other proposal checks (unchanged)
 
 | Check | Result |
 | --- | --- |
 | Footprint | 224 sq ft |
 | Floor area (2 stories) | 448 sq ft |
-| Remaining FAR budget (~1,658 sq ft) | OK |
-| Rear setback after 16′ extension | ~44′ remaining → OK vs 20′ |
-| Side setback if flush | **Fails** (~3.2′ vs 5′/9′) |
-| Side setback if left wall at 5′ (GF) | OK for ground floor; 2nd story should step in to 9′ |
+| FAR budget | OK vs ~1,658 sq ft remaining |
+| Rear yard after 16′ extension | Likely OK vs 20′ (confirm on site) |
 
-## Building code note
-
-Even with zoning relief, walls/openings this close to the property line trigger **CRC R302** fire-separation rules (fire-rated walls, limited openings). That gets expensive/awkward at ~3′.
-
-## Recommended next step
-
-Ask Richmond Planning counter / Zoning Administrator:
-
-1. Confirm measured side setback (bring a site plan with dimensions).
-2. Whether a flush side-wall extension can use **15.04.606.070.C.2** AUP, or must meet 5′/9′.
-3. Whether a 2nd story in that side yard can stay flush or must step back to 9′.
-
-See diagram: [`left-rear-addition-setback-check.png`](left-rear-addition-setback-check.png)
+Diagram: [`left-rear-addition-setback-check.png`](left-rear-addition-setback-check.png)

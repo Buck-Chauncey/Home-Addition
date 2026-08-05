@@ -52,5 +52,12 @@
     "RMC 15.04.201.030 Development Standards \u2014 RH, RL1 and RL2",
     "Contra Costa CCMAP Assessment Parcels"
   ],
-  "disclaimer": "Planning aid only \u2014 not a survey, not city approval. GIS boundaries are approximate. Existing building footprint from OSM may be imprecise. Front-setback averaging and exact property corners require field/survey confirmation."
+  "disclaimer": "Planning aid only \u2014 not a survey, not city approval. GIS boundaries are approximate. Existing building footprint from OSM may be imprecise. Front-setback averaging and exact property corners require field/survey confirmation.",
+  "measured_setbacks": {
+    "left_side_wall_inches": 52.5,
+    "left_side_wall_feet": 4.375,
+    "left_side_runs_parallel_to_boundary": true,
+    "source": "Owner field measurement",
+    "notes": "Left side in site-plan diagrams (side yard toward addition). Supersedes OSM footprint side-setback estimate of ~3.2 ft."
+  }
 }

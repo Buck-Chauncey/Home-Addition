@@ -53,12 +53,21 @@ Standards from **RMC 15.04.201.030** (RH / RL1 / RL2 development standards):
 5. **Lot coverage budget:** total building footprints (house + garage + addition) ≤ **2,500 sq ft**.
 6. **Building code (CRC/CBC)** still applies inside the envelope (egress, light/air, fire separation at walls/openings near property lines, structural, energy, etc.). Zoning setbacks are usually the first filter for *where*; the code governs *how*.
 
+## Measured setbacks (owner)
+
+| Item | Value |
+| --- | --- |
+| Left side wall to parcel line | **52.5″ (4.375′)** — runs parallel |
+| Source | Owner field measurement (supersedes OSM ~3.2′ estimate) |
+
+See [`left-rear-addition-setback-check.md`](left-rear-addition-setback-check.md) for the flush vs. pull-in addition check.
+
 ## Assumptions
 
 - Treated as an interior lot (not a corner); street-side setback not applied.
 - Used code table setbacks (front 20′ / rear 20′), not measured neighbor averages.
 - Did not apply ADU-specific setbacks (state/local ADU rules differ if that is the project type).
-- Existing footprints are OSM-derived via the city layer and may not match a survey.
+- Existing footprints are OSM-derived via the city layer and may not match a survey — prefer field measurements.
 
 ## Next verification steps with the City
 
