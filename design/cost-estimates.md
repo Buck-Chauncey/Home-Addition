@@ -5,17 +5,19 @@
 
 ## Summary comparison
 
-| | **V0** | **L stair** | **spiral_stairs** | **lean** |
-| --- | ---: | ---: | ---: | ---: |
-| New gross floor area | ~595 sf | ~595 sf | ~595 sf | **~501 sf** |
-| Footprint | ~327 sf | ~327 sf | ~327 sf | **~276 sf** |
-| Upstairs wet room | Full bath | Full bath | Full bath | **Toilet + lav only** |
-| Yard door | 6′ slider | 6′ slider | 6′ slider | **5′ double doors** |
-| Stair | Straight (~9.8′ into yard) | L (~4′) | Spiral Ø5′ (~5′) | **Spiral Ø5′ (~5′)** |
-| **Low total** | **≈ $298k** | **≈ $299k** | **≈ $292k** | **≈ $210k** |
-| **High total** | **≈ $482k** | **≈ $484k** | **≈ $476k** | **≈ $355k** |
+| | **V0** | **L stair** | **spiral_stairs** | **lean** | **ADU** |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| New gross floor area | ~595 sf | ~595 sf | ~595 sf | ~501 sf | **~528 sf** |
+| Footprint | ~327 sf | ~327 sf | ~327 sf | ~276 sf | **~276 sf** |
+| 2nd fl east setback | 9′ inset | 9′ inset | 9′ inset | 9′ inset | **5′ flush** |
+| Upstairs | Full bath | Full bath | Full bath | Toilet only | **Full bath + kitchenette** |
+| Yard door | 6′ slider | 6′ slider | 6′ slider | 5′ doubles | **5′ doubles** |
+| Stair | Straight | L | Spiral | Spiral | **Spiral** |
+| **Low total** | **≈ $298k** | **≈ $299k** | **≈ $292k** | **≈ $210k** | **≈ $240k** |
+| **High total** | **≈ $482k** | **≈ $484k** | **≈ $476k** | **≈ $355k** | **≈ $400k** |
 
-**Lean is the clear cost winner** — roughly **$80k–$130k less** than the full two-bath variants, mainly from a smaller shell, no upstairs shower bath, simpler Bath 1, and cheaper yard doors.
+**Lean** is cheapest. **ADU** adds kitchenette + full upstairs bath and uses flush
+5′ walls (wider 2nd floor, no cantilever) — confirm ADU setbacks with Planning.
 
 ---
 
@@ -100,6 +102,38 @@
 
 ---
 
+## ADU variant — flush 5′ walls, kitchenette + full bath upstairs, spiral
+
+Same lean first floor (~276 sf footprint). Second floor is a **studio ADU**
+(~252 sf plate, flush 14′ width at 5′ setback — no inset/cantilever).
+
+| Line item | Low | High |
+| --- | ---: | ---: |
+| Soft costs | $31,000 | $54,000 |
+| Site prep, excavation, demo | $7,000 | $12,000 |
+| Foundation (crawlspace, ~276 sq ft) | $22,000 | $36,000 |
+| Framing (flush two-story, wider 2nd floor — no cantilever detailing) | $42,000 | $62,000 |
+| Roofing + gutters + tie-in | $8,000 | $14,000 |
+| Windows + 5′ double doors + furniture window | $10,000 | $18,000 |
+| Siding, exterior trim, paint | $12,000 | $20,000 |
+| Plumbing (shower bath below + full bath + kitchenette above, stacked) | $22,000 | $38,000 |
+| Electrical (incl. ADU circuits / possible subpanel) | $12,000 | $20,000 |
+| HVAC (2-zone mini-split; ADU may need separate control) | $9,000 | $15,000 |
+| Insulation + drywall | $12,000 | $19,000 |
+| Interior finishes | $12,000 | $22,000 |
+| Bath tile (2 shower baths) + kitchenette cabinets/counter | $12,000 | $22,000 |
+| Dining-room wall opening + header | $6,000 | $12,000 |
+| Prefab spiral stair + landing + guards | $6,000 | $12,000 |
+| **ADU construction subtotal** | **$185,000** | **$306,000** |
+| Contingency 10% | $19,000 | $31,000 |
+| Soft costs | $31,000 | $54,000 |
+| **ADU total** | **≈ $240,000** | **≈ $400,000** |
+
+ADU path may also change permit fees (sometimes lower for ADUs under state law) —
+verify with Richmond Building; not assumed in the numbers above.
+
+---
+
 ## Further cuts (any variant)
 
 1. Owner-GC / self-perform paint, floors, some finish  
@@ -115,8 +149,10 @@
 | [`L stair/`](L%20stair/) | L-stair, full program |
 | [`spiral_stairs/`](spiral_stairs/) | Spiral + 6′×5′ furniture window, full program |
 | [`lean/`](lean/) | **Smaller shell, shower bath, upstairs toilet only, spiral, 5′ double doors** |
+| [`ADU/`](ADU/) | **Flush 5′ walls; upstairs studio ADU (kitchenette + full bath); spiral** |
 
 ```bash
+python3 generate_plans.py --params ADU/params.json --out ADU
 python3 generate_plans.py --params lean/params.json --out lean
 python3 generate_plans.py --params "L stair/params.json" --out "L stair"
 python3 generate_plans.py --params V0/params.json --out V0

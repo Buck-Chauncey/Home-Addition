@@ -490,15 +490,24 @@ def second_floor():
     W, D = s["ext_width"], s["ext_depth"]
     bathd = s["bath_interior_depth"]
     bath_type = s.get("bath_type", "shower")  # shower | toilet_only
+    has_kit = s.get("kitchenette", False)
+    flush = off < 1
     shape = stair_shape()
     title_stair = {"L": "L-stair access", "straight": "straight exterior-stair access",
                    "spiral": "spiral-stair access + furniture window"}[shape]
-    room_title = ("room + toilet only" if bath_type == "toilet_only"
-                  else "office + shower bath")
+    if has_kit:
+        room_title = "ADU studio (kitchenette + full bath)"
+    elif bath_type == "toilet_only":
+        room_title = "room + toilet only"
+    else:
+        room_title = "office + shower bath"
+    setback_note = ("East face at 5'-0\" setback, flush with 1st floor (ADU)"
+                    if flush else
+                    "East face at 9'-0\" side setback (conforming)")
 
     fig, ax = base_axes(
         f"Second floor — {room_title}, {title_stair}\n"
-        "East face at 9'-0\" side setback (conforming); 8'-0\" ceilings")
+        f"{setback_note}; 8'-0\" ceilings")
 
     iw, idp = W - 2 * EXT, D - 2 * EXT
     x0 = off
@@ -508,20 +517,17 @@ def second_floor():
     wall_rect(ax, x0 + W - EXT, 0, EXT, D)
 
     if bath_type == "toilet_only":
-        # Compact powder in NE corner, stacked over Bath 1 wet wall
         bathw = s.get("bath_interior_width", 54)
         y_zone = EXT + bathd
         wall_rect(ax, x0 + EXT, y_zone, bathw, INT)
         wall_rect(ax, x0 + EXT + bathw, EXT, INT, bathd)
         room(ax, x0 + EXT, EXT, bathw, bathd, "WC",
              f"{ft_in(bathw)} × {ft_in(bathd)}\n(toilet + lav)", fs=8, dy=4)
-        # open room fills the rest
         ax.add_patch(Rectangle((x0 + EXT, y_zone + INT), iw, idp - bathd - INT,
                                facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
         ax.add_patch(Rectangle((x0 + EXT + bathw + INT, EXT),
                                iw - bathw - INT, bathd + INT,
                                facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
-        room_w, room_d = iw, idp
         ax.text(x0 + EXT + iw / 2, y_zone + INT + (idp - bathd - INT) / 2,
                 f"ROOM\n{ft_in(iw)} × {ft_in(idp)} clear\n(open plan)",
                 ha="center", va="center", fontsize=10, zorder=5, color="#333333")
@@ -531,6 +537,44 @@ def second_floor():
         fixture(ax, x0 + EXT + iw - 66, y_zone + INT + 20, 60, 30, "DESK")
         west_win_y0 = y_zone + INT + 20
         west_win_span = idp - bathd - INT - 40
+    elif has_kit:
+        # ADU: bath NE + kitchenette NW strip + open studio south
+        bathw = s.get("bath_interior_width", 90)
+        kit_d = s.get("kitchenette_depth", 30)
+        y_bath = EXT + bathd
+        y_kit = EXT + kit_d
+        kit_w = iw - bathw - INT
+        wall_rect(ax, x0 + EXT, y_bath, bathw, INT)
+        wall_rect(ax, x0 + EXT + bathw, EXT, INT, bathd)
+        wall_rect(ax, x0 + EXT + bathw + INT, y_kit, kit_w, INT)
+        room(ax, x0 + EXT, EXT, bathw, bathd, "BATH",
+             f"{ft_in(bathw)} × {ft_in(bathd)}", fs=8, dy=8)
+        room(ax, x0 + EXT + bathw + INT, EXT, kit_w, kit_d, "KITCHENETTE",
+             f"{ft_in(kit_w)} × {ft_in(kit_d)}", fs=7, dy=0)
+        # studio fill
+        ax.add_patch(Rectangle((x0 + EXT, y_bath + INT), iw, idp - bathd - INT,
+                               facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
+        ax.add_patch(Rectangle((x0 + EXT + bathw + INT, y_kit + INT), kit_w,
+                               bathd - kit_d, facecolor=ROOM_COLOR,
+                               edgecolor="none", zorder=1))
+        ax.text(x0 + EXT + iw / 2, y_bath + INT + (idp - bathd - INT) / 2,
+                f"ADU STUDIO\nliving / sleeping\n{ft_in(iw)} wide",
+                ha="center", va="center", fontsize=10, zorder=5, color="#333333")
+        fixture(ax, x0 + EXT, EXT + 4, 36, 36, "SHOWER\n36×36")
+        fixture(ax, x0 + EXT + 42, EXT, 30, 28, "WC")
+        fixture(ax, x0 + EXT + bathw - 40, y_bath - 22, 36, 22, "VANITY")
+        door(ax, x0 + EXT + bathw / 2 - 14, y_bath, 28, horizontal=True)
+        # kitchenette fixtures along north wall
+        kx = x0 + EXT + bathw + INT
+        fixture(ax, kx + 4, EXT, 30, 24, "SINK")
+        fixture(ax, kx + 38, EXT, 30, 24, "COOK\nTOP")
+        fixture(ax, kx + kit_w - 28, EXT, 24, 28, "MINI\nFRIDGE")
+        fixture(ax, x0 + EXT + iw - 70, y_bath + INT + 24, 60, 30, "BED / SOFA")
+        west_win_y0 = y_bath + INT + 24
+        west_win_span = idp - bathd - INT - 48
+        ax.text(x0 + EXT + 4, -12, "ADU — confirm CA/Richmond ADU standards with Planning",
+                fontsize=7.5, color="#8a4b00",
+                bbox=dict(boxstyle="round", fc="#fff8e8", ec="#e07000"))
     else:
         y_zone = EXT + bathd
         wall_rect(ax, x0 + EXT, y_zone, iw, INT)
@@ -547,41 +591,52 @@ def second_floor():
         west_win_y0 = y_zone + INT + (offd - 48) / 2
         west_win_span = 48
         bathw = iw
+        y_bath = y_zone
 
     entry_x = x0 + EXT + 8
     door(ax, entry_x, D - EXT, 36, horizontal=True)
     ax.text(entry_x + 18, D + 6, "ENTRY", ha="center", fontsize=8, color="#8a4b00")
 
     window(ax, x0 + EXT + iw / 2 - 30, D - EXT, 60, horizontal=True)
-    if bath_type != "toilet_only":
+    if has_kit:
+        window(ax, x0 + EXT + bathw + INT + 8, 0, 28, horizontal=True)
+    elif bath_type != "toilet_only":
         window(ax, x0 + EXT + iw - 40, 0, 30, horizontal=True)
     else:
         window(ax, x0 + EXT + bathw + INT + 10, 0, 30, horizontal=True)
 
     if s.get("furniture_window"):
         fw = s.get("furniture_window_width", 72)
-        # place along west wall in the open room
-        wy = max(EXT + 20, (EXT + idp - fw) / 2 + EXT)
-        if bath_type == "toilet_only":
-            wy = EXT + bathd + INT + 16
-        window(ax, x0 + W - EXT, wy, fw, horizontal=False)
+        wy = west_win_y0 if bath_type == "toilet_only" or has_kit else west_win_y0
+        if has_kit:
+            wy = (EXT + bathd + INT) + 16
+        window(ax, x0 + W - EXT, wy, min(fw, west_win_span if west_win_span > 40 else fw),
+               horizontal=False)
         ax.text(x0 + W + 8, wy + fw / 2,
                 f"FURNITURE ACCESS\n{ft_in(fw)} × {ft_in(s.get('furniture_window_height', 60))}\n"
-                f"operable window/door\n(desk, mattress, etc.)",
+                f"operable window/door",
                 ha="left", va="center", fontsize=7.5, color="#1d4ed8",
                 bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
     else:
-        window(ax, x0 + W - EXT, west_win_y0, min(48, west_win_span), horizontal=False)
+        window(ax, x0 + W - EXT, west_win_y0, min(48, max(24, west_win_span)),
+               horizontal=False)
 
     ax.add_patch(Rectangle((0, 0), f["main_block_ext_width"], f["main_block_ext_depth"],
                            fill=False, edgecolor="#999999", lw=1.0, linestyle=":", zorder=0))
-    ax.text(off - 6, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
-            ha="center", va="center", fontsize=7, color="#888888", rotation=90)
+    if flush:
+        ax.text(x0 + W + 8, D / 2, "walls flush\nwith 1st floor\n(5' setback)",
+                ha="left", va="center", fontsize=7.5, color="#2f7d2f")
+    else:
+        ax.text(off - 6, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
+                ha="center", va="center", fontsize=7, color="#888888", rotation=90)
     ax.plot([-20, x0 + W + 30], [0, 0], color="#aaaaaa", lw=1.2, linestyle="--", zorder=0)
     ax.text(x0 + W + 34, -2, "existing 1-story house / roof below ↓",
             ha="left", va="top", fontsize=7, color="#888888")
     fW = f["main_block_ext_width"]
-    dim_h(ax, fW, x0 + W, -16, label=f"{ft_in(x0 + W - fW)} cantilever")
+    if abs((x0 + W) - fW) > 2:
+        dim_h(ax, fW, x0 + W, -16, label=f"{ft_in(x0 + W - fW)} cantilever")
+    else:
+        dim_h(ax, 0, W, -16, label="flush with 1st floor")
 
     g = stair_geom()
     xmax, ymax = draw_stair_plan(ax, g)
@@ -591,18 +646,22 @@ def second_floor():
     dim_v(ax, 0, D, x0 - 14, offset=-24, label=ft_in(D))
     dim_v(ax, 0, EXT + bathd + INT / 2, x0 - 14, offset=-10,
           label=ft_in(EXT + bathd + INT / 2))
-    dim_h(ax, 0, x0, -16, label="4'-0\" offset")
+    if not flush:
+        dim_h(ax, 0, x0, -16, label="4'-0\" offset")
 
     sy = max(D + land, ymax) + 34
-    ax.annotate("", xy=(-108 + off, sy), xytext=(x0, sy),
+    setback_ft = P["setbacks"]["east_pl_to_addition_upper_face_ft"]
+    ax.annotate("", xy=(-12 * setback_ft, sy), xytext=(x0, sy),
                 arrowprops=dict(arrowstyle="<->", color="#b00000", lw=1.2))
-    ax.text(x0 - 54, sy + 6, "9'-0\" upper-story side setback",
+    ax.text(x0 - 6 * setback_ft, sy + 6,
+            f"{setback_ft:.0f}'-0\" side setback"
+            + (" (flush ADU)" if flush else ""),
             ha="center", fontsize=8, color="#b00000")
-    ax.plot([off - 108, off - 108], [-50, sy + 30], color="#b00000", lw=1.4,
-            linestyle="--")
+    ax.plot([-12 * setback_ft, -12 * setback_ft], [-50, sy + 30], color="#b00000",
+            lw=1.4, linestyle="--")
 
-    compass(ax, off - 108, -70)
-    ax.set_xlim(off - 150, max(x0 + W, xmax) + 80)
+    compass(ax, -12 * setback_ft - 40, -70)
+    ax.set_xlim(-12 * setback_ft - 80, max(x0 + W, xmax) + 90)
     ax.set_ylim(-120, sy + 50)
     fig.savefig(out_path("second-floor-plan.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -696,9 +755,13 @@ def site_plan():
 
     sx = e_uf
     sw2 = sec["ext_width"] / 12.0
+    flush = abs(e_uf - e_gf) < 0.1 and abs(sw2 - aw) < 0.1
     ax.add_patch(Rectangle((sx, ay), sw2, ad, fill=False, edgecolor="#1d4ed8",
                            lw=1.4, linestyle="-."))
-    ax.text(sx + sw2 / 2, ay + ad / 2 + 3.5, "2nd floor", ha="center",
+    label = "2nd fl ADU\n(flush walls)" if sec.get("kitchenette") else "2nd floor"
+    if flush and sec.get("kitchenette"):
+        label = "2nd fl ADU (flush @ 5')"
+    ax.text(sx + sw2 / 2, ay + ad / 2 + 3.5, label, ha="center",
             fontsize=8, color="#1d4ed8")
 
     g = stair_geom()
@@ -893,12 +956,18 @@ def west_elevation():
     g = stair_geom()
     riser_h = g["riser"]
     shape = g["shape"]
+    cant_in = off + W2 - W1
+    flush = abs(cant_in) < 2
 
     subtitle = {
-        "L": "L-stair lower flight in profile; 2'-6\" cantilever; corridor bump-out",
-        "straight": "straight stair wraps past SW corner (end view); 2'-6\" cantilever",
-        "spiral": "spiral at SE (dashed, far side); large west furniture window; cantilever",
+        "L": "L-stair lower flight in profile; corridor bump-out",
+        "straight": "straight stair wraps past SW corner (end view)",
+        "spiral": "spiral at SE (dashed, far side); west furniture window",
     }[shape]
+    if flush:
+        subtitle = subtitle + "; flush walls @ 5' setback (ADU)"
+    elif abs(cant_in) >= 2:
+        subtitle = subtitle + "; 2'-6\" cantilever"
 
     fig, ax = plt.subplots(figsize=(13, 8))
     ax.set_title(f"West elevation (from side yard, looking east) — south on RIGHT\n{subtitle}",
@@ -924,13 +993,19 @@ def west_elevation():
             f"CORRIDOR\nbump-out\n({ft_in(door_w)} {door_short}\non south face)",
             ha="center", va="center", fontsize=7, color="#333333", zorder=4)
 
-    ax.add_patch(Rectangle((cor_d, 0), D - cor_d, ff + c1 + fl, facecolor="#d9ceb8",
-                           edgecolor="#555555", lw=1.0, linestyle="--", zorder=1))
-    ax.text((cor_d + D) / 2, ff + 20, "1st fl. west wall\n(2'-6\" under cantilever)",
-            ha="center", va="bottom", fontsize=7, color="#666666")
+    # first-floor main-block west wall
+    if flush:
+        ax.add_patch(Rectangle((cor_d, 0), D - cor_d, ff + c1 + fl, facecolor="#e8dcc8",
+                               edgecolor="#555555", lw=1.2, zorder=1))
+    else:
+        ax.add_patch(Rectangle((cor_d, 0), D - cor_d, ff + c1 + fl, facecolor="#d9ceb8",
+                               edgecolor="#555555", lw=1.0, linestyle="--", zorder=1))
+        ax.text((cor_d + D) / 2, ff + 20, "1st fl. west wall\n(2'-6\" under cantilever)",
+                ha="center", va="bottom", fontsize=7, color="#666666")
     ax.add_patch(Rectangle((D / 2 + 20, ff + 30), 36, 48, facecolor="#dfeefb",
                            edgecolor="#4a6172", lw=1, zorder=2))
 
+    # second-floor west face
     ax.add_patch(Rectangle((0, sf - fl), D, fl + c2 + 8, facecolor="#dfd2ba",
                            edgecolor="#555555", lw=1.2, zorder=3))
 
@@ -957,8 +1032,12 @@ def west_elevation():
         ax.text(-24, y, lbl, ha="right", va="center", fontsize=8, color="#555555")
     ax.text(mid, ridge + 8, f"ridge ≈ +{ft_in(ridge)}  (max 30')",
             ha="center", fontsize=8, color="#555555")
-    ax.text(D + 10, sf - fl / 2, "2'-6\" cantilever\n(2nd fl. west face\ntoward viewer)",
-            fontsize=7, color="#1d4ed8", va="center")
+    if abs(cant_in) >= 2:
+        ax.text(D + 10, sf - fl / 2, "2'-6\" cantilever\n(2nd fl. west face\ntoward viewer)",
+                fontsize=7, color="#1d4ed8", va="center")
+    else:
+        ax.text(D + 10, sf - fl / 2, "walls flush\n(5' setback both floors)",
+                fontsize=7, color="#2f7d2f", va="center")
 
     if shape == "L":
         lo_treads = g["lo_r"] - 1

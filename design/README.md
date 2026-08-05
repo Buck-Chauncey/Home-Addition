@@ -4,20 +4,22 @@
 
 ## Variants
 
-| Folder | Stair | Program | Yard door | Cost range |
+| Folder | Stair | Program | 2nd fl setback | Cost range |
 | --- | --- | --- | --- | ---: |
-| [`V0/`](V0/) | Straight (~9.8′ into yard) | Full: king BR + full bath + office + shower bath | 6′ slider | ≈ $298k–$482k |
-| [`L stair/`](L%20stair/) | L around SW (~4′) | Same full program | 6′ slider | ≈ $299k–$484k |
-| [`spiral_stairs/`](spiral_stairs/) | Ø5′ spiral (~5′) | Same full program + 6′×5′ furniture window | 6′ slider | ≈ $292k–$476k |
-| [`lean/`](lean/) | Ø5′ spiral (~5′) | **Smaller 14′×18′; shower bath; upstairs toilet only** | **5′ double doors** | **≈ $210k–$355k** |
+| [`V0/`](V0/) | Straight | Full two-bath | 9′ inset | ≈ $298k–$482k |
+| [`L stair/`](L%20stair/) | L | Full two-bath | 9′ inset | ≈ $299k–$484k |
+| [`spiral_stairs/`](spiral_stairs/) | Spiral | Full + furniture window | 9′ inset | ≈ $292k–$476k |
+| [`lean/`](lean/) | Spiral | Smaller; upstairs toilet only | 9′ inset | ≈ $210k–$355k |
+| [`ADU/`](ADU/) | Spiral | **Studio ADU upstairs (kitchenette + full bath)** | **5′ flush** | **≈ $240k–$400k** |
 
 ## Cost comparison
 
-See **[`cost-estimates.md`](cost-estimates.md)** for line items.
+See **[`cost-estimates.md`](cost-estimates.md)**.
 
 ## Generator
 
 ```bash
+python3 generate_plans.py --params ADU/params.json --out ADU
 python3 generate_plans.py --params lean/params.json --out lean
 python3 generate_plans.py --params "L stair/params.json" --out "L stair"
 python3 generate_plans.py --params V0/params.json --out V0
