@@ -1,0 +1,78 @@
+{
+  "comment": "LEAN variant: smaller footprint (14'×18'), shower bath + reach-in closet, upstairs toilet only, spiral stair, simple 5' double doors to yard.",
+  "walls": {
+    "exterior_thickness": 6.5,
+    "interior_thickness": 4.5
+  },
+  "setbacks": {
+    "east_pl_to_addition_ground_face_ft": 5.0,
+    "east_pl_to_addition_upper_face_ft": 9.0,
+    "existing_house_east_face_from_pl_ft": 4.375
+  },
+  "existing_house": {
+    "comment": "From the 2021 Compass marketing floor plan (approximate; field-verify).",
+    "east_face_local_x": -7.5,
+    "bedroom_dining_wall_local_x": 146,
+    "dining_kitchen_wall_local_x": 249,
+    "width_ft": 40.25,
+    "depth_ft": 30.5,
+    "living_sqft": 919
+  },
+  "first_floor": {
+    "main_block_ext_width": 168,
+    "main_block_ext_depth": 216,
+    "north_zone_interior_depth": 60,
+    "bath_interior_width": 96,
+    "closet_interior_depth": 0,
+    "closet_style": "reach_in_west",
+    "reach_in_depth": 24,
+    "reach_in_width": 60,
+    "corridor_interior_ns": 36,
+    "yard_door": "double",
+    "yard_door_width": 60,
+    "bath_fixtures": "shower",
+    "ceiling_height_ft": 9.0,
+    "corridor_note": "Lean: 14×18 main block, shower bath, reach-in closet, 5' swinging double doors to yard, dining bump-out."
+  },
+  "second_floor": {
+    "east_face_offset_from_ground_east_face": 48,
+    "ext_width": 150,
+    "ext_depth": 216,
+    "bath_type": "toilet_only",
+    "bath_interior_depth": 48,
+    "bath_interior_width": 54,
+    "ceiling_height_ft": 8.0,
+    "furniture_window": true,
+    "furniture_window_width": 60,
+    "furniture_window_height": 54,
+    "furniture_window_sill": 24,
+    "note": "Open room + toilet-only powder (stacked over Bath 1). Spiral access; furniture via west window."
+  },
+  "stair": {
+    "total_rise": 140,
+    "riser_max": 9.5,
+    "tread_run": 0,
+    "width": 0,
+    "top_landing": 48,
+    "shape": "spiral",
+    "diameter": 60,
+    "clear_width_at_handrail": 26,
+    "walkline_tread_min": 6.75,
+    "headroom_min": 78,
+    "note": "CRC R311.7.10.1 spiral at SE entry. Furniture via west operable window."
+  },
+  "levels": {
+    "first_finish_floor_above_grade": 18,
+    "floor_assembly_depth": 13.5,
+    "roof_pitch_in_12": 4
+  },
+  "site_ft": {
+    "lot_width": 50,
+    "lot_depth": 100,
+    "house_front_setback": 20,
+    "porch": {"x0": 20, "width": 13, "depth": 5},
+    "garage": {"width": 11.25, "length": 24, "front_proud": 3},
+    "shed": {"x0": 12, "width": 13.5, "from_rear_pl": 6, "depth": 10},
+    "note": "Front setback assumed 20 ft (verify)."
+  }
+}
