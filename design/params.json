@@ -1,5 +1,5 @@
 {
-  "comment": "All dimensions in inches unless noted. Orientation matches owner sketches: bottom of plan = north (existing house / Panama Ave side), left = east (property-line side), top = south (backyard).",
+  "comment": "All dimensions in inches unless noted. Orientation matches owner sketches and the Compass marketing plans: bottom of plan = north (Panama Ave side), left = east (property-line side), top = south (backyard). Addition local x=0 at the addition's ground-floor east exterior face (5 ft from the east property line), increasing west; y=0 at the existing house rear wall, increasing south.",
   "walls": {
     "exterior_thickness": 6.5,
     "interior_thickness": 4.5
@@ -9,6 +9,15 @@
     "east_pl_to_addition_upper_face_ft": 9.0,
     "existing_house_east_face_from_pl_ft": 4.375
   },
+  "existing_house": {
+    "comment": "From the 2021 Compass marketing floor plan (approximate; field-verify). Local x of interior wall centerlines measured west from the addition's east face.",
+    "east_face_local_x": -7.5,
+    "bedroom_dining_wall_local_x": 146,
+    "dining_kitchen_wall_local_x": 249,
+    "width_ft": 40.25,
+    "depth_ft": 30.5,
+    "living_sqft": 919
+  },
   "first_floor": {
     "main_block_ext_width": 198,
     "main_block_ext_depth": 228,
@@ -16,8 +25,8 @@
     "bath_interior_width": 114,
     "closet_interior_width": 42,
     "corridor_interior_ns": 38,
-    "corridor_interior_ew": 102,
-    "ceiling_height_ft": 9.0
+    "ceiling_height_ft": 9.0,
+    "corridor_note": "Corridor is a bump-out of the DINING room: it spans the dining room's rear wall (new opening + header) and flows into the addition's entry; no separate hall."
   },
   "second_floor": {
     "east_face_offset_from_ground_east_face": 48,
@@ -43,8 +52,9 @@
     "lot_width": 50,
     "lot_depth": 100,
     "house_front_setback": 20,
-    "house_width": 28,
-    "house_depth": 38,
-    "note": "House rectangle is schematic (assessor footprint is irregular); field-verify rear-wall position."
+    "porch": {"x0": 20, "width": 13, "depth": 5},
+    "garage": {"width": 11.25, "length": 24, "front_proud": 3},
+    "shed": {"x0": 12, "width": 13.5, "from_rear_pl": 6, "depth": 10},
+    "note": "Front setback assumed 20 ft (verify); house footprint from the Compass marketing plan. Shed position approximate from the marketing site plan."
   }
 }

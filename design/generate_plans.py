@@ -136,69 +136,109 @@ def base_axes(title):
 
 def first_floor():
     f = P["first_floor"]
+    h = P["existing_house"]
     W, D = f["main_block_ext_width"], f["main_block_ext_depth"]
     nz = f["north_zone_interior_depth"]
     bathw = f["bath_interior_width"]
     closw = f["closet_interior_width"]
-    cor_ns, cor_ew = f["corridor_interior_ns"], f["corridor_interior_ew"]
+    cor_ns = f["corridor_interior_ns"]
+
+    # existing-house geometry (local coordinates)
+    hx_east = h["east_face_local_x"]            # house east face (east of addition face)
+    x_bd = h["bedroom_dining_wall_local_x"]     # bedroom/dining wall centerline
+    x_dk = h["dining_kitchen_wall_local_x"]     # dining/kitchen wall centerline
+    din_e, din_w = x_bd + 4, x_dk - 4.5         # dining interior faces (approx)
 
     fig, ax = base_axes(
-        "First floor — bedroom + full bath + walk-in closet + corridor\n"
+        "First floor — bedroom + full bath + walk-in closet; corridor bumps out of the DINING ROOM\n"
         "East face at 5'-0\" side setback (conforming); 9'-0\" ceilings")
 
     iw, idp = W - 2 * EXT, D - 2 * EXT          # interior width / depth
-    vestw = iw - bathw - INT                    # vestibule width
+    entryw = iw - bathw - INT                   # open entry width (former hall)
     bedd = idp - nz - INT                       # bedroom zone depth
     bedw = iw - closw - INT                     # bedroom width
 
-    # exterior walls of main block
-    wall_rect(ax, 0, 0, W, EXT)                 # north wall
-    wall_rect(ax, 0, D - EXT, W, EXT)           # south wall
-    wall_rect(ax, 0, 0, EXT, D)                 # east wall
-    wall_rect(ax, W - EXT, 0, EXT, D)           # west wall
-
-    # interior partitions
     y_zone = EXT + nz                           # wall between north zone and bedroom zone
-    wall_rect(ax, EXT, y_zone, iw, INT)
-    x_bath = EXT + bathw                        # bath/vestibule wall
-    wall_rect(ax, x_bath, EXT, INT, nz)
-    x_clos = EXT + closw                        # closet/bedroom wall
-    wall_rect(ax, x_clos, y_zone + INT, INT, bedd)
+    x_bath = EXT + bathw                        # bath / entry wall
+    x_clos = EXT + closw                        # closet / bedroom wall
 
-    # rooms
+    # corridor bump-out west of the main block, in front of the dining room
+    cor_w_int = din_w                           # corridor west interior face aligns w/ dining west wall
+    cor_x1 = cor_w_int + EXT                    # bump-out west exterior face
+
+    # ---- existing house context (ghost, north of y=0) -----------------------
+    ghost_d = 110
+    for x0, x1, name in [(hx_east, x_bd, "EXISTING BEDROOM\n(rear windows covered —\nverify egress at side window)"),
+                         (x_bd, x_dk, "DINING ROOM"),
+                         (x_dk, x_dk + 130, "KITCHEN\n(sink wall untouched)")]:
+        ax.add_patch(Rectangle((x0, -ghost_d), x1 - x0, ghost_d, fill=False,
+                               edgecolor="#aaaaaa", lw=1.0, linestyle="--", zorder=0))
+        ax.text((x0 + x1) / 2, -ghost_d / 2, name, ha="center", va="center",
+                fontsize=7.5, color="#888888", zorder=0)
+    ax.text((hx_east + x_dk + 100) / 2, -ghost_d - 10, "EXISTING HOUSE (1 story)",
+            ha="center", fontsize=9, color="#777777")
+
+    # ---- room fills ---------------------------------------------------------
     room(ax, EXT, EXT, bathw, nz, "BATH 1", f"{ft_in(bathw)} × {ft_in(nz)}")
-    room(ax, x_bath + INT, EXT, vestw, nz, "HALL", ft_in(vestw) + " wide")
+    # open entry: former hall + corridor bump, one continuous space
+    ax.add_patch(Rectangle((x_bath + INT, 0), entryw, EXT + nz, facecolor=ROOM_COLOR,
+                           edgecolor="none", zorder=1))
+    ax.add_patch(Rectangle((din_e, 0), cor_w_int - din_e, cor_ns, facecolor=ROOM_COLOR,
+                           edgecolor="none", zorder=1))
+    ax.text((x_bath + W) / 2, nz - 6, "ENTRY", ha="center", fontsize=9, color="#333333",
+            zorder=5)
+    ax.text((W + cor_w_int) / 2, cor_ns / 2, "CORRIDOR\n(open to dining)", ha="center",
+            va="center", fontsize=7.5, color="#333333", zorder=5)
     room(ax, EXT, y_zone + INT, closw, bedd, "WALK-IN\nCLOSET", ft_in(closw) + " deep", fs=8)
     room(ax, x_clos + INT, y_zone + INT, bedw, bedd, "BEDROOM",
          f"{ft_in(bedw)} × {ft_in(bedd)}")
 
-    # corridor to living room (west of main block, against house wall)
-    cx0 = W                                      # corridor starts at main-block west face
-    wall_rect(ax, cx0, cor_ns, cor_ew + EXT, EXT)          # corridor south wall
-    wall_rect(ax, cx0 + cor_ew, 0, EXT, cor_ns + EXT)      # corridor west wall
-    room(ax, cx0, 0, cor_ew, cor_ns, "CORRIDOR",
-         f"{ft_in(cor_ew)} × {ft_in(cor_ns)}", fs=8)
-    # opening from corridor into hall (in main-block west wall)
-    door(ax, W - EXT, 2, 34, horizontal=False)
-    ax.text(cx0 + cor_ew / 2, -8,
-            "existing house wall opened full corridor length → LIVING ROOM (new header)",
-            ha="center", va="top", fontsize=8, color="#8a4b00")
+    # ---- walls --------------------------------------------------------------
+    wall_rect(ax, 0, 0, EXT, D)                          # east wall
+    wall_rect(ax, 0, D - EXT, W, EXT)                    # south wall
+    wall_rect(ax, 0, 0, x_bd, EXT)                       # north wall vs existing bedroom
+    wall_rect(ax, W - EXT, 0, EXT, EXT)                  # NW corner post
+    wall_rect(ax, W - EXT, cor_ns + EXT, EXT, D - cor_ns - EXT)  # west wall (south of corridor)
+    wall_rect(ax, W - EXT, cor_ns, cor_x1 - W + EXT, EXT)        # corridor south wall
+    wall_rect(ax, cor_w_int, 0, EXT, cor_ns + EXT)               # corridor west wall
+    wall_rect(ax, EXT, y_zone, iw, INT)                  # zone wall
+    wall_rect(ax, x_bath, EXT, INT, nz)                  # bath / entry wall
+    wall_rect(ax, x_clos, y_zone + INT, INT, bedd)       # closet / bedroom wall
+
+    # opening in the existing dining rear wall (drawn as orange span at y=0)
+    ax.plot([din_e, cor_w_int], [0, 0], color="#e07000", lw=3, zorder=6)
+    ax.text((din_e + cor_w_int) / 2, -16,
+            f"existing dining rear wall opened {ft_in(cor_w_int - din_e)} (new header)",
+            ha="center", fontsize=8, color="#8a4b00", zorder=6,
+            bbox=dict(boxstyle="round", fc="white", ec="none", alpha=0.8))
+
+    # circulation arrow: dining -> corridor -> entry -> bedroom
+    ax.annotate("", xy=(x_bath + INT + entryw / 2, y_zone - 8),
+                xytext=((din_e + cor_w_int) / 2, -40),
+                arrowprops=dict(arrowstyle="-|>", color="#2f7d2f", lw=1.6,
+                                connectionstyle="arc3,rad=0.25"), zorder=6)
 
     # doors
-    door(ax, x_bath, EXT + nz - 34, 30, horizontal=False)   # bath door from hall
-    door(ax, x_bath + INT + 12, y_zone, 32, horizontal=True)  # bedroom door from hall
+    door(ax, x_bath, EXT + nz - 34, 30, horizontal=False)     # bath door from entry
+    door(ax, x_bath + INT + 12, y_zone, 32, horizontal=True)  # bedroom door from entry
     door(ax, x_clos, y_zone + INT + bedd - 40, 32, horizontal=False)  # closet door
 
-    # windows: south egress window in bedroom, west window
+    # windows: south egress window in bedroom, west window, corridor south window
     window(ax, x_clos + INT + bedw / 2 - 24, D - EXT, 48, horizontal=True)
     ax.text(x_clos + INT + bedw / 2, D + 4, "egress window (CRC R310)",
             ha="center", fontsize=7, color="#4a6172")
     window(ax, W - EXT, y_zone + INT + bedd / 2 - 18, 36, horizontal=False)
+    window(ax, W + 12, cor_ns, cor_w_int - W - 24, horizontal=True)
+    ax.text((W + cor_x1) / 2, cor_ns + EXT + 5, "window\n(daylight for dining)",
+            ha="center", va="bottom", fontsize=6.5, color="#4a6172")
 
-    # fixtures — bath 1: tub along east wall, WC north wall, double vanity south of zone wall
+    # fixtures — bath 1: tub along east wall, WC north wall, double vanity on zone wall
     fixture(ax, EXT, EXT + 6, 30, 60, "TUB\n30×60")
     fixture(ax, EXT + 36, EXT, 30, 28, "WC")
     fixture(ax, EXT + bathw - 62, EXT + nz - 22, 60, 22, "DOUBLE VANITY 60\"")
+    ax.text(EXT + bathw / 2, -10, "bath wet wall backs existing bedroom",
+            ha="center", fontsize=7, color="#4a6172",
+            bbox=dict(boxstyle="round", fc="white", ec="none", alpha=0.8))
     # king bed in bedroom
     fixture(ax, x_clos + INT + (bedw - 76) / 2, y_zone + INT + bedd - 80 - 8, 76, 80,
             "KING BED\n76×80")
@@ -208,25 +248,26 @@ def first_floor():
     dim_h(ax, 0, x_clos + INT / 2, D + EXT, offset=12, label=ft_in(x_clos + INT / 2))
     dim_v(ax, 0, D, -14, offset=-26)
     dim_v(ax, 0, EXT + nz + INT / 2, -14, offset=-12, label=ft_in(EXT + nz + INT / 2))
-    dim_h(ax, W, W + cor_ew + EXT, -38, label=ft_in(cor_ew + EXT))
-    dim_v(ax, 0, cor_ns + EXT, W + cor_ew + EXT + 10, label=ft_in(cor_ns + EXT))
+    dim_h(ax, W, cor_x1, cor_ns + EXT + 26, label=ft_in(cor_x1 - W))
+    dim_v(ax, 0, cor_ns + EXT, cor_x1 + 10, label=ft_in(cor_ns + EXT))
 
     # setback annotation (above the building, clear of dimension lines)
     ax.annotate("", xy=(-60, D + 44), xytext=(0, D + 44),
                 arrowprops=dict(arrowstyle="<->", color="#b00000", lw=1.2))
     ax.text(-30, D + 50, "5'-0\" side setback\n(east property line)",
             ha="center", fontsize=8, color="#b00000")
-    ax.plot([-60, -60], [-50, D + 90], color="#b00000", lw=1.4, linestyle="--")
+    ax.plot([-60, -60], [-140, D + 90], color="#b00000", lw=1.4, linestyle="--")
 
-    compass(ax, -60, -70)
-    ax.set_xlim(-100, W + cor_ew + 90)
-    ax.set_ylim(-120, D + 100)
+    compass(ax, -95, D + 95)
+    ax.set_xlim(-100, x_dk + 140)
+    ax.set_ylim(-150, D + 100)
     fig.savefig(os.path.join(HERE, "first-floor-plan.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
 
     areas = {
-        "footprint_sqft": (W * D + (cor_ew + EXT) * (cor_ns + EXT)) / 144.0,
-        "interior_sqft": (iw * idp + cor_ew * cor_ns) / 144.0,
+        "footprint_sqft": (W * D + (cor_x1 - W) * (cor_ns + EXT)) / 144.0,
+        "interior_sqft": (iw * idp + (cor_w_int - (W - EXT)) * cor_ns) / 144.0,
+        "dining_opening_in": cor_w_int - din_e,
     }
     return areas
 
@@ -285,6 +326,10 @@ def second_floor():
                            fill=False, edgecolor="#999999", lw=1.0, linestyle=":", zorder=0))
     ax.text(off / 2, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
             ha="center", va="center", fontsize=7, color="#888888", rotation=90)
+    # existing house line (1-story roof below, north of the addition)
+    ax.plot([-20, x0 + W + 30], [0, 0], color="#aaaaaa", lw=1.2, linestyle="--", zorder=0)
+    ax.text(x0 + W + 34, -2, "existing 1-story house / roof below ↓",
+            ha="left", va="top", fontsize=7, color="#888888")
 
     # exterior stair + landing along south wall
     land = st["top_landing"]
@@ -346,6 +391,7 @@ def second_floor():
 def site_plan():
     s = P["site_ft"]
     f = P["first_floor"]
+    h = P["existing_house"]
     sec = P["second_floor"]
     st = P["stair"]
     lw_, ld = s["lot_width"], s["lot_depth"]
@@ -372,23 +418,48 @@ def site_plan():
         ax.plot([0, lw_], [y, y], color="#b00000", lw=1.0, linestyle="--")
         ax.text(1, y + 0.4, lbl, fontsize=7, color="#b00000")
 
-    # existing house (schematic)
+    # existing house per the Compass marketing plan (40.25' x 30.5')
     hx, hy = e_house, s["house_front_setback"]
-    hw, hd = s["house_width"], s["house_depth"]
+    hw, hd = h["width_ft"], h["depth_ft"]
     ax.add_patch(Rectangle((hx, hy), hw, hd, facecolor="#c9b8a3", edgecolor="#7a6a55", lw=1.2))
-    ax.text(hx + hw / 2, hy + hd / 2, "EXISTING HOUSE\n(schematic — verify)",
-            ha="center", va="center", fontsize=9)
+    ax.text(hx + hw / 2, hy + hd / 2,
+            "EXISTING HOUSE\n40.25' × 30.5' (919 sq ft)\nfront setback assumed — verify",
+            ha="center", va="center", fontsize=8.5)
 
-    # existing garage (schematic, rear west)
-    ax.add_patch(Rectangle((lw_ - 5 - 14, ld - 5 - 20), 14, 20, facecolor="#d3c7b5",
+    # front porch (front-center) and attached garage (front-west)
+    p = s["porch"]
+    ax.add_patch(Rectangle((p["x0"], hy - p["depth"]), p["width"], p["depth"],
+                           facecolor="#d3c7b5", edgecolor="#7a6a55", lw=1.0))
+    ax.text(p["x0"] + p["width"] / 2, hy - p["depth"] / 2, "PORCH", ha="center",
+            va="center", fontsize=7)
+    g = s["garage"]
+    gx = hx + hw - g["width"]
+    gy = hy - g["front_proud"]
+    ax.add_patch(Rectangle((gx, gy), g["width"], g["length"], facecolor="#d3c7b5",
                            edgecolor="#7a6a55", lw=1.0))
-    ax.text(lw_ - 5 - 7, ld - 5 - 10, "GARAGE\n(verify)", ha="center", va="center", fontsize=8)
+    ax.text(gx + g["width"] / 2, gy + g["length"] / 2, "GARAGE\n(attached)",
+            ha="center", va="center", fontsize=8)
+    ax.text(gx + g["width"] / 2, 8, "DRIVEWAY", ha="center", fontsize=7, color="#777777")
+
+    # mud-room ramp at rear west (approximate)
+    ax.add_patch(Rectangle((hx + hw - 5, hy + hd), 4, 7, facecolor="#e0e0e0",
+                           edgecolor="#888888", lw=0.8))
+    ax.text(hx + hw - 3, hy + hd + 3.5, "ramp", ha="center", va="center", fontsize=6.5)
+
+    # shed in the rear-east yard (approximate from marketing site plan)
+    sh = s["shed"]
+    shy = ld - sh["from_rear_pl"] - sh["depth"]
+    ax.add_patch(Rectangle((sh["x0"], shy), sh["width"], sh["depth"],
+                           facecolor="#d3c7b5", edgecolor="#7a6a55", lw=1.0))
+    ax.text(sh["x0"] + sh["width"] / 2, shy + sh["depth"] / 2,
+            "SHED 135 sq ft\n(verify position)", ha="center", va="center", fontsize=7.5)
 
     # addition ground floor
     ay = hy + hd
     aw = f["main_block_ext_width"] / 12.0
     ad = f["main_block_ext_depth"] / 12.0
-    cw = (f["corridor_interior_ew"] + EXT) / 12.0
+    cor_x1 = h["dining_kitchen_wall_local_x"] - 4.5 + EXT   # bump-out west face (local in)
+    cw = (cor_x1 - f["main_block_ext_width"]) / 12.0
     cd = (f["corridor_interior_ns"] + EXT) / 12.0
     ax.add_patch(Rectangle((e_gf, ay), aw, ad, facecolor="#9ec99e",
                            edgecolor="#3c6e3c", lw=1.4))
