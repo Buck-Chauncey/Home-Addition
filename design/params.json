@@ -19,21 +19,23 @@
     "living_sqft": 919
   },
   "first_floor": {
-    "main_block_ext_width": 198,
-    "main_block_ext_depth": 228,
+    "main_block_ext_width": 168,
+    "main_block_ext_depth": 258,
     "north_zone_interior_depth": 72,
-    "bath_interior_width": 114,
-    "closet_interior_width": 42,
+    "bath_interior_width": 108,
+    "closet_interior_depth": 30,
     "corridor_interior_ns": 38,
+    "slider_width": 72,
     "ceiling_height_ft": 9.0,
-    "corridor_note": "Corridor is a bump-out of the DINING room: it spans the dining room's rear wall (new opening + header) and flows into the addition's entry; no separate hall."
+    "corridor_note": "Corridor is a bump-out of the DINING room: it spans the dining room's rear wall (new opening + header) and flows into the addition's entry; no separate hall. Main block narrowed to 14 ft so the corridor south wall is wide enough for a 6 ft double sliding door to the backyard. Closet runs east-west against the bathroom wall; bedroom deepened to keep a king bed comfortable."
   },
   "second_floor": {
     "east_face_offset_from_ground_east_face": 48,
     "ext_width": 150,
-    "ext_depth": 228,
+    "ext_depth": 258,
     "bath_interior_depth": 66,
-    "ceiling_height_ft": 8.0
+    "ceiling_height_ft": 8.0,
+    "note": "West wall cantilevers 2'-6\" beyond the narrowed first-floor west wall (joists span E-W, back-span 10 ft)."
   },
   "stair": {
     "total_rise": 140,

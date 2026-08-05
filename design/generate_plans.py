@@ -140,8 +140,9 @@ def first_floor():
     W, D = f["main_block_ext_width"], f["main_block_ext_depth"]
     nz = f["north_zone_interior_depth"]
     bathw = f["bath_interior_width"]
-    closw = f["closet_interior_width"]
+    closd = f["closet_interior_depth"]
     cor_ns = f["corridor_interior_ns"]
+    slider = f["slider_width"]
 
     # existing-house geometry (local coordinates)
     hx_east = h["east_face_local_x"]            # house east face (east of addition face)
@@ -150,17 +151,16 @@ def first_floor():
     din_e, din_w = x_bd + 4, x_dk - 4.5         # dining interior faces (approx)
 
     fig, ax = base_axes(
-        "First floor — bedroom + full bath + walk-in closet; corridor bumps out of the DINING ROOM\n"
-        "East face at 5'-0\" side setback (conforming); 9'-0\" ceilings")
+        "First floor — bedroom + full bath + E-W closet; wide corridor off the DINING ROOM\n"
+        "with 6'-0\" double slider to the backyard; east face at 5'-0\" setback; 9'-0\" ceilings")
 
     iw, idp = W - 2 * EXT, D - 2 * EXT          # interior width / depth
-    entryw = iw - bathw - INT                   # open entry width (former hall)
-    bedd = idp - nz - INT                       # bedroom zone depth
-    bedw = iw - closw - INT                     # bedroom width
-
-    y_zone = EXT + nz                           # wall between north zone and bedroom zone
-    x_bath = EXT + bathw                        # bath / entry wall
-    x_clos = EXT + closw                        # closet / bedroom wall
+    entryw = iw - bathw - INT                   # entry passage width
+    y_zone = EXT + nz                           # wall between bath and closet
+    y_clos = y_zone + INT + closd               # closet south wall (bedroom side)
+    y_bed = y_clos + INT                        # bedroom north interior face
+    bedd = D - EXT - y_bed                      # bedroom depth
+    x_bath = EXT + bathw                        # bath-closet / entry wall
 
     # corridor bump-out west of the main block, in front of the dining room
     cor_w_int = din_w                           # corridor west interior face aligns w/ dining west wall
@@ -180,18 +180,19 @@ def first_floor():
 
     # ---- room fills ---------------------------------------------------------
     room(ax, EXT, EXT, bathw, nz, "BATH 1", f"{ft_in(bathw)} × {ft_in(nz)}")
-    # open entry: former hall + corridor bump, one continuous space
-    ax.add_patch(Rectangle((x_bath + INT, 0), entryw, EXT + nz, facecolor=ROOM_COLOR,
+    room(ax, EXT, y_zone + INT, bathw, closd, "CLOSET (sliders)",
+         f"{ft_in(bathw)} × {ft_in(closd)}", fs=8)
+    # entry passage: corridor around into the bedroom door — no hall room
+    ax.add_patch(Rectangle((x_bath + INT, 0), entryw, y_clos, facecolor=ROOM_COLOR,
                            edgecolor="none", zorder=1))
-    ax.add_patch(Rectangle((din_e, 0), cor_w_int - din_e, cor_ns, facecolor=ROOM_COLOR,
-                           edgecolor="none", zorder=1))
-    ax.text((x_bath + W) / 2, nz - 6, "ENTRY", ha="center", fontsize=9, color="#333333",
-            zorder=5)
+    ax.add_patch(Rectangle((W - EXT, 0), cor_w_int - W + EXT, cor_ns,
+                           facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
+    ax.text(x_bath + INT + entryw / 2, (y_zone + y_clos) / 2, "ENTRY", ha="center",
+            va="center", fontsize=8, color="#333333", zorder=5, rotation=90)
     ax.text((W + cor_w_int) / 2, cor_ns / 2, "CORRIDOR\n(open to dining)", ha="center",
             va="center", fontsize=7.5, color="#333333", zorder=5)
-    room(ax, EXT, y_zone + INT, closw, bedd, "WALK-IN\nCLOSET", ft_in(closw) + " deep", fs=8)
-    room(ax, x_clos + INT, y_zone + INT, bedw, bedd, "BEDROOM",
-         f"{ft_in(bedw)} × {ft_in(bedd)}")
+    room(ax, EXT, y_bed, iw, bedd, "BEDROOM", f"{ft_in(iw)} × {ft_in(bedd)}",
+         dy=-bedd / 2 + 22)
 
     # ---- walls --------------------------------------------------------------
     wall_rect(ax, 0, 0, EXT, D)                          # east wall
@@ -201,9 +202,9 @@ def first_floor():
     wall_rect(ax, W - EXT, cor_ns + EXT, EXT, D - cor_ns - EXT)  # west wall (south of corridor)
     wall_rect(ax, W - EXT, cor_ns, cor_x1 - W + EXT, EXT)        # corridor south wall
     wall_rect(ax, cor_w_int, 0, EXT, cor_ns + EXT)               # corridor west wall
-    wall_rect(ax, EXT, y_zone, iw, INT)                  # zone wall
-    wall_rect(ax, x_bath, EXT, INT, nz)                  # bath / entry wall
-    wall_rect(ax, x_clos, y_zone + INT, INT, bedd)       # closet / bedroom wall
+    wall_rect(ax, EXT, y_zone, bathw, INT)               # bath / closet wall
+    wall_rect(ax, x_bath, EXT, INT, y_clos - EXT)        # bath+closet / entry wall
+    wall_rect(ax, EXT, y_clos, iw, INT)                  # closet+entry / bedroom wall
 
     # opening in the existing dining rear wall (drawn as orange span at y=0)
     ax.plot([din_e, cor_w_int], [0, 0], color="#e07000", lw=3, zorder=6)
@@ -213,42 +214,51 @@ def first_floor():
             bbox=dict(boxstyle="round", fc="white", ec="none", alpha=0.8))
 
     # circulation arrow: dining -> corridor -> entry -> bedroom
-    ax.annotate("", xy=(x_bath + INT + entryw / 2, y_zone - 8),
+    ax.annotate("", xy=(x_bath + INT + entryw / 2 - 10, y_clos - 24),
                 xytext=((din_e + cor_w_int) / 2, -40),
                 arrowprops=dict(arrowstyle="-|>", color="#2f7d2f", lw=1.6,
-                                connectionstyle="arc3,rad=0.25"), zorder=6)
+                                connectionstyle="arc3,rad=0.3"), zorder=6)
 
     # doors
-    door(ax, x_bath, EXT + nz - 34, 30, horizontal=False)     # bath door from entry
-    door(ax, x_bath + INT + 12, y_zone, 32, horizontal=True)  # bedroom door from entry
-    door(ax, x_clos, y_zone + INT + bedd - 40, 32, horizontal=False)  # closet door
+    door(ax, x_bath, EXT + nz - 34, 30, horizontal=False)       # bath door from entry
+    door(ax, x_bath + INT + 5, y_clos, 32, horizontal=True)     # bedroom door at passage end
+    door(ax, EXT + bathw / 2 - 30, y_clos, 60, horizontal=True)  # closet sliders to bedroom
+    ax.text(EXT + bathw / 2, y_clos + INT + 4, "closet sliders", ha="center",
+            fontsize=6.5, color="#666666", zorder=6)
 
-    # windows: south egress window in bedroom, west window, corridor south window
-    window(ax, x_clos + INT + bedw / 2 - 24, D - EXT, 48, horizontal=True)
-    ax.text(x_clos + INT + bedw / 2, D + 4, "egress window (CRC R310)",
+    # windows / glazed doors
+    window(ax, EXT + iw / 2 - 24, D - EXT, 48, horizontal=True)   # bedroom egress, south
+    ax.text(EXT + iw / 2, D + 4, "egress window (CRC R310)",
             ha="center", fontsize=7, color="#4a6172")
-    window(ax, W - EXT, y_zone + INT + bedd / 2 - 18, 36, horizontal=False)
-    window(ax, W + 12, cor_ns, cor_w_int - W - 24, horizontal=True)
-    ax.text((W + cor_x1) / 2, cor_ns + EXT + 5, "window\n(daylight for dining)",
-            ha="center", va="bottom", fontsize=6.5, color="#4a6172")
+    window(ax, W - EXT, y_bed + bedd / 2 - 18, 36, horizontal=False)  # bedroom west window
+    # 6' double sliding door in the corridor south wall, to the backyard
+    sl_x = (W - EXT + cor_w_int) / 2 - slider / 2
+    window(ax, sl_x, cor_ns, slider, horizontal=True)
+    ax.plot([sl_x + slider / 2, sl_x + slider / 2], [cor_ns, cor_ns + EXT],
+            color="#4a6172", lw=0.8, zorder=5)
+    ax.annotate("", xy=(sl_x + slider / 2 + 26, cor_ns + EXT + 16),
+                xytext=(sl_x + slider / 2 - 26, cor_ns + EXT + 16),
+                arrowprops=dict(arrowstyle="<->", color="#1d4ed8", lw=1.0))
+    ax.text(sl_x + slider / 2, cor_ns + EXT + 22,
+            f"{ft_in(slider)} DOUBLE SLIDER → backyard", ha="center", fontsize=7.5,
+            color="#1d4ed8")
 
     # fixtures — bath 1: tub along east wall, WC north wall, double vanity on zone wall
-    fixture(ax, EXT, EXT + 6, 30, 60, "TUB\n30×60")
-    fixture(ax, EXT + 36, EXT, 30, 28, "WC")
-    fixture(ax, EXT + bathw - 62, EXT + nz - 22, 60, 22, "DOUBLE VANITY 60\"")
+    fixture(ax, EXT, EXT + 4, 30, 60, "TUB\n30×60")
+    fixture(ax, EXT + 34, EXT, 30, 28, "WC")
+    fixture(ax, x_bath - 62, y_zone - 22, 60, 22, "DOUBLE VANITY 60\"")
     ax.text(EXT + bathw / 2, -10, "bath wet wall backs existing bedroom",
             ha="center", fontsize=7, color="#4a6172",
             bbox=dict(boxstyle="round", fc="white", ec="none", alpha=0.8))
-    # king bed in bedroom
-    fixture(ax, x_clos + INT + (bedw - 76) / 2, y_zone + INT + bedd - 80 - 8, 76, 80,
-            "KING BED\n76×80")
+    # king bed: headboard on the east wall
+    fixture(ax, EXT + 8, y_bed + (bedd - 76) / 2, 80, 76, "KING BED\n76×80")
 
     # dimensions
     dim_h(ax, 0, W, D + EXT, offset=26)
-    dim_h(ax, 0, x_clos + INT / 2, D + EXT, offset=12, label=ft_in(x_clos + INT / 2))
     dim_v(ax, 0, D, -14, offset=-26)
-    dim_v(ax, 0, EXT + nz + INT / 2, -14, offset=-12, label=ft_in(EXT + nz + INT / 2))
-    dim_h(ax, W, cor_x1, cor_ns + EXT + 26, label=ft_in(cor_x1 - W))
+    dim_v(ax, 0, y_zone + INT / 2, -14, offset=-12, label=ft_in(y_zone + INT / 2))
+    dim_v(ax, y_bed, D - EXT, -14, offset=-12, label=ft_in(bedd))
+    dim_h(ax, W, cor_x1, cor_ns + EXT + 44, label=ft_in(cor_x1 - W))
     dim_v(ax, 0, cor_ns + EXT, cor_x1 + 10, label=ft_in(cor_ns + EXT))
 
     # setback annotation (above the building, clear of dimension lines)
@@ -268,6 +278,7 @@ def first_floor():
         "footprint_sqft": (W * D + (cor_x1 - W) * (cor_ns + EXT)) / 144.0,
         "interior_sqft": (iw * idp + (cor_w_int - (W - EXT)) * cor_ns) / 144.0,
         "dining_opening_in": cor_w_int - din_e,
+        "bedroom": (iw, bedd),
     }
     return areas
 
@@ -324,12 +335,15 @@ def second_floor():
     # ghost of first floor below
     ax.add_patch(Rectangle((0, 0), f["main_block_ext_width"], f["main_block_ext_depth"],
                            fill=False, edgecolor="#999999", lw=1.0, linestyle=":", zorder=0))
-    ax.text(off / 2, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
+    ax.text(off - 6, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
             ha="center", va="center", fontsize=7, color="#888888", rotation=90)
     # existing house line (1-story roof below, north of the addition)
     ax.plot([-20, x0 + W + 30], [0, 0], color="#aaaaaa", lw=1.2, linestyle="--", zorder=0)
     ax.text(x0 + W + 34, -2, "existing 1-story house / roof below ↓",
             ha="left", va="top", fontsize=7, color="#888888")
+    # cantilever beyond the narrowed first-floor west wall
+    fW = f["main_block_ext_width"]
+    dim_h(ax, fW, x0 + W, -16, label=f"{ft_in(x0 + W - fW)} cantilever")
 
     # exterior stair + landing along south wall
     land = st["top_landing"]
