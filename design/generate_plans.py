@@ -248,10 +248,20 @@ def draw_stair_plan(ax, g):
         # UP arrow arc
         ax.add_patch(Arc((cx, cy), r * 1.3, r * 1.3, angle=0, theta1=-20, theta2=200,
                          color="#444444", lw=1.2, zorder=4))
-        ax.text(cx, cy + r + 10, g["summary"], ha="center", fontsize=7.5)
-        ax.text(cx, cy - r - 8, "UP ↻  (people only — furniture via west window)",
-                ha="center", fontsize=7, color="#1d4ed8")
-        return cx + r, cy + r
+        sec = P["second_floor"]
+        if sec.get("west_slider") and sec.get("balcony"):
+            access = "UP ↻  (people — furniture via west slider)"
+        elif sec.get("furniture_window") or sec.get("west_slider"):
+            access = "UP ↻  (people only — furniture via west opening)"
+        else:
+            access = "UP ↻"
+        # keep notes west of spiral (right on plan) so they clear the setback line
+        ax.text(cx + r + 14, cy + 14, access, ha="left", va="bottom", fontsize=7,
+                color="#1d4ed8")
+        ax.text(cx + r + 14, cy - 6,
+                f"spiral Ø{ft_in(g['diameter'])}: {g['risers']} @ {g['riser']:.2f}\"",
+                ha="left", va="top", fontsize=7, color="#444444")
+        return cx + r + 150, cy + r + 20
 
     # L
     tl = draw_stair_rect(ax, g["top_landing"], color="#d9d9d9")
@@ -494,7 +504,13 @@ def second_floor():
     flush = off < 1
     shape = stair_shape()
     title_stair = {"L": "L-stair access", "straight": "straight exterior-stair access",
-                   "spiral": "spiral-stair access + furniture window"}[shape]
+                   "spiral": "spiral-stair access"}[shape]
+    if s.get("west_slider") and s.get("balcony"):
+        title_stair = "spiral access + west slider / balcony"
+    elif s.get("furniture_window"):
+        title_stair = "spiral-stair access + furniture window"
+    elif s.get("west_slider"):
+        title_stair = "spiral access + west slider"
     if has_kit:
         room_title = "ADU studio (kitchenette + full bath)"
     elif bath_type == "toilet_only":
@@ -547,32 +563,43 @@ def second_floor():
         wall_rect(ax, x0 + EXT, y_bath, bathw, INT)
         wall_rect(ax, x0 + EXT + bathw, EXT, INT, bathd)
         wall_rect(ax, x0 + EXT + bathw + INT, y_kit, kit_w, INT)
-        room(ax, x0 + EXT, EXT, bathw, bathd, "BATH",
-             f"{ft_in(bathw)} × {ft_in(bathd)}", fs=8, dy=8)
-        room(ax, x0 + EXT + bathw + INT, EXT, kit_w, kit_d, "KITCHENETTE",
-             f"{ft_in(kit_w)} × {ft_in(kit_d)}", fs=7, dy=0)
+        # bath fill (fixture labels only — room name would collide in this small bath)
+        ax.add_patch(Rectangle((x0 + EXT, EXT), bathw, bathd,
+                               facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
+        ax.text(x0 + EXT + 2, EXT + bathd - 6, f"{ft_in(bathw)}×{ft_in(bathd)}",
+                ha="left", va="top", fontsize=6, zorder=5, color="#666666")
+        # kitchenette fill
+        ax.add_patch(Rectangle((x0 + EXT + bathw + INT, EXT), kit_w, kit_d,
+                               facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
         # studio fill
         ax.add_patch(Rectangle((x0 + EXT, y_bath + INT), iw, idp - bathd - INT,
                                facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
         ax.add_patch(Rectangle((x0 + EXT + bathw + INT, y_kit + INT), kit_w,
                                bathd - kit_d, facecolor=ROOM_COLOR,
                                edgecolor="none", zorder=1))
-        ax.text(x0 + EXT + iw / 2, y_bath + INT + (idp - bathd - INT) / 2,
+        ax.text(x0 + EXT + iw / 2, y_bath + INT + (idp - bathd - INT) / 2 + 20,
                 f"ADU STUDIO\nliving / sleeping\n{ft_in(iw)} wide",
                 ha="center", va="center", fontsize=10, zorder=5, color="#333333")
-        fixture(ax, x0 + EXT, EXT + 4, 36, 36, "SHOWER\n36×36")
-        fixture(ax, x0 + EXT + 42, EXT, 30, 28, "WC")
-        fixture(ax, x0 + EXT + bathw - 40, y_bath - 22, 36, 22, "VANITY")
+        fixture(ax, x0 + EXT, EXT + 4, 34, 34, "SHWR", fs=6)
+        fixture(ax, x0 + EXT + 40, EXT + 2, 28, 26, "WC", fs=6)
+        # vanity on south bath wall (east of door), clear of WC
+        fixture(ax, x0 + EXT + 8, y_bath - 20, 34, 18, "VAN", fs=5.5)
         door(ax, x0 + EXT + bathw / 2 - 14, y_bath, 28, horizontal=True)
-        # kitchenette fixtures along north wall
+        # kitchenette appliance boxes (no in-box labels — avoids collisions)
         kx = x0 + EXT + bathw + INT
-        fixture(ax, kx + 4, EXT, 30, 24, "SINK")
-        fixture(ax, kx + 38, EXT, 30, 24, "COOK\nTOP")
-        fixture(ax, kx + kit_w - 28, EXT, 24, 28, "MINI\nFRIDGE")
-        fixture(ax, x0 + EXT + iw - 70, y_bath + INT + 24, 60, 30, "BED / SOFA")
+        ax.add_patch(Rectangle((kx + 4, EXT), 26, 20, facecolor=FIXTURE_COLOR,
+                               edgecolor="#4a6172", lw=0.8, zorder=4))
+        ax.add_patch(Rectangle((kx + 34, EXT), 26, 20, facecolor=FIXTURE_COLOR,
+                               edgecolor="#4a6172", lw=0.8, zorder=4))
+        ax.add_patch(Rectangle((kx + kit_w - 26, EXT), 24, 22, facecolor=FIXTURE_COLOR,
+                               edgecolor="#4a6172", lw=0.8, zorder=4))
+        ax.text(x0 + EXT + bathw + INT + kit_w / 2, y_bath + INT + 22,
+                f"KITCHENETTE  {ft_in(kit_w)}×{ft_in(kit_d)}  (sink · cook · fridge)",
+                ha="center", va="bottom", fontsize=6.5, zorder=5, color="#333333")
+        fixture(ax, x0 + EXT + iw - 70, y_bath + INT + 56, 60, 28, "BED / SOFA")
         west_win_y0 = y_bath + INT + 24
         west_win_span = idp - bathd - INT - 48
-        ax.text(x0 + EXT + 4, -12, "ADU — confirm CA/Richmond ADU standards with Planning",
+        ax.text(x0 + EXT + 4, -52, "ADU — confirm CA/Richmond ADU standards with Planning",
                 fontsize=7.5, color="#8a4b00",
                 bbox=dict(boxstyle="round", fc="#fff8e8", ec="#e07000"))
     else:
@@ -621,10 +648,6 @@ def second_floor():
                 color="#4a6172", lw=1.2, zorder=5)
         ax.plot([x0 + W - EXT / 2, x0 + W - EXT / 2], [wy, wy + sw_draw],
                 color="#4a6172", lw=0.8, zorder=5)
-        ax.text(x0 + W + 8, wy + sw_draw / 2,
-                f"SLIDING DOORS\n{ft_in(sw)} × {ft_in(sh)}\n→ west balcony",
-                ha="left", va="center", fontsize=7.5, color="#1d4ed8",
-                bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
         if s.get("balcony"):
             bd = s.get("balcony_depth", 48)
             bw = s.get("balcony_width", 120)
@@ -638,11 +661,21 @@ def second_floor():
             ax.plot([x0 + W, x0 + W + bd], [by, by], color="#555555", lw=1.4, zorder=3)
             ax.plot([x0 + W, x0 + W + bd], [by + bw, by + bw],
                     color="#555555", lw=1.4, zorder=3)
-            ax.text(x0 + W + bd / 2, by + bw / 2,
-                    f"BALCONY\n{ft_in(bw)} × {ft_in(bd)}\nguard 42\"",
-                    ha="center", va="center", fontsize=7.5, color="#3d2e1a", zorder=4)
-            dim_h(ax, x0 + W, x0 + W + bd, by - 10, label=ft_in(bd))
-            bal_xmax = x0 + W + bd + 20
+            ax.text(x0 + W + bd / 2, by + bw / 2 + 8, "BALCONY",
+                    ha="center", va="center", fontsize=7, color="#3d2e1a", zorder=4)
+            dim_h(ax, x0 + W, x0 + W + bd, by - 14, label=ft_in(bd))
+            # callout clear of balcony (to the west)
+            ax.text(x0 + W + bd + 12, wy + sw_draw / 2,
+                    f"SLIDING DOORS\n{ft_in(sw)} × {ft_in(sh)}\n"
+                    f"balcony {ft_in(bw)} × {ft_in(bd)}\nguard 42\"",
+                    ha="left", va="center", fontsize=7.5, color="#1d4ed8",
+                    bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
+            bal_xmax = x0 + W + bd + 95
+        else:
+            ax.text(x0 + W + 8, wy + sw_draw / 2,
+                    f"SLIDING DOORS\n{ft_in(sw)} × {ft_in(sh)}",
+                    ha="left", va="center", fontsize=7.5, color="#1d4ed8",
+                    bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
     elif s.get("furniture_window"):
         fw = s.get("furniture_window_width", 72)
         wy = west_win_y0 if bath_type == "toilet_only" or has_kit else west_win_y0
@@ -661,21 +694,25 @@ def second_floor():
 
     ax.add_patch(Rectangle((0, 0), f["main_block_ext_width"], f["main_block_ext_depth"],
                            fill=False, edgecolor="#999999", lw=1.0, linestyle=":", zorder=0))
-    flush_note_x = bal_xmax + 8 if s.get("balcony") else x0 + W + 8
     if flush:
-        ax.text(flush_note_x, D / 2, "walls flush\nwith 1st floor\n(5' setback)",
-                ha="left", va="center", fontsize=7.5, color="#2f7d2f")
+        # keep flush note clear of balcony callouts (south of balcony / callout)
+        if s.get("balcony"):
+            ax.text(bal_xmax + 8, D - 20, "walls flush\nwith 1st floor\n(5' setback)",
+                    ha="left", va="center", fontsize=7.5, color="#2f7d2f")
+        else:
+            ax.text(x0 + W + 8, D / 2, "walls flush\nwith 1st floor\n(5' setback)",
+                    ha="left", va="center", fontsize=7.5, color="#2f7d2f")
     else:
         ax.text(off - 6, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
                 ha="center", va="center", fontsize=7, color="#888888", rotation=90)
     ax.plot([-20, x0 + W + 30], [0, 0], color="#aaaaaa", lw=1.2, linestyle="--", zorder=0)
-    ax.text(x0 + W + 34, -2, "existing 1-story house / roof below ↓",
-            ha="left", va="top", fontsize=7, color="#888888")
+    ax.text(x0 + W / 2, -2, "existing 1-story house / roof below ↓",
+            ha="center", va="top", fontsize=7, color="#888888")
     fW = f["main_block_ext_width"]
     if abs((x0 + W) - fW) > 2:
         dim_h(ax, fW, x0 + W, -16, label=f"{ft_in(x0 + W - fW)} cantilever")
     else:
-        dim_h(ax, 0, W, -16, label="flush with 1st floor")
+        dim_h(ax, 0, W, -28, label="flush with 1st floor")
 
     g = stair_geom()
     xmax, ymax = draw_stair_plan(ax, g)
@@ -776,8 +813,8 @@ def site_plan():
     shy = ld - sh["from_rear_pl"] - sh["depth"]
     ax.add_patch(Rectangle((sh["x0"], shy), sh["width"], sh["depth"],
                            facecolor="#d3c7b5", edgecolor="#7a6a55", lw=1.0))
-    ax.text(sh["x0"] + sh["width"] / 2, shy + sh["depth"] / 2,
-            "SHED 135 sq ft\n(verify position)", ha="center", va="center", fontsize=7.5)
+    ax.text(sh["x0"] + sh["width"] / 2, shy + sh["depth"] + 1.5,
+            "SHED 135 sq ft\n(verify position)", ha="center", va="bottom", fontsize=7.5)
 
     ay = hy + hd
     aw = f["main_block_ext_width"] / 12.0
@@ -789,7 +826,8 @@ def site_plan():
                            edgecolor="#3c6e3c", lw=1.4))
     ax.add_patch(Rectangle((e_gf + aw, ay), cw, cd, facecolor="#9ec99e",
                            edgecolor="#3c6e3c", lw=1.4))
-    ax.text(e_gf + aw / 2, ay + ad / 2 - 2, "ADDITION\nground floor",
+    # ground-floor label toward house (north); 2nd-floor label toward yard (south)
+    ax.text(e_gf + aw / 2, ay + ad * 0.28, "ADDITION\nground floor",
             ha="center", va="center", fontsize=8)
 
     sx = e_uf
@@ -799,19 +837,23 @@ def site_plan():
                            lw=1.4, linestyle="-."))
     label = "2nd fl ADU\n(flush walls)" if sec.get("kitchenette") else "2nd floor"
     if flush and sec.get("kitchenette"):
-        label = "2nd fl ADU (flush @ 5')"
-    ax.text(sx + sw2 / 2, ay + ad / 2 + 3.5, label, ha="center",
-            fontsize=8, color="#1d4ed8")
+        label = "2nd fl ADU\n(flush @ 5')"
 
+    bal_extra = 0.0
     if sec.get("balcony"):
         bd_ft = sec.get("balcony_depth", 48) / 12.0
         bw_ft = sec.get("balcony_width", 120) / 12.0
-        # center on west face of addition (x increases west)
         by0 = ay + (ad - bw_ft) / 2
         ax.add_patch(Rectangle((e_gf + aw, by0), bd_ft, bw_ft,
                                facecolor="#c8b89a", edgecolor="#6b5a3e", lw=1.0))
-        ax.text(e_gf + aw + bd_ft / 2, by0 + bw_ft / 2, "BALCONY",
-                ha="center", va="center", fontsize=6.5, color="#3d2e1a")
+        ax.text(e_gf + aw + bd_ft + 1.2, ay + ad * 0.4, label, ha="left", va="center",
+                fontsize=7.5, color="#1d4ed8",
+                bbox=dict(boxstyle="round", fc="white", ec="#1d4ed8", alpha=0.92))
+        ax.text(e_gf + aw + bd_ft / 2, by0 - 0.6, "balcony",
+                ha="center", va="top", fontsize=6, color="#3d2e1a")
+    else:
+        ax.text(sx + sw2 / 2, ay + ad * 0.72, label, ha="center", va="center",
+                fontsize=8, color="#1d4ed8")
 
     g = stair_geom()
     draw_stair_site(ax, g, e_gf, ay)
@@ -889,8 +931,9 @@ def south_elevation():
 
     for y, lbl in [(ff, f'1st FF  +{ft_in(ff)}'), (sf, f'2nd FF  +{ft_in(sf)}'),
                    (plate2, f'2nd plate  +{ft_in(plate2)}')]:
-        ax.plot([xd(W1) - 6, xd(0) + 6], [y, y], color="#888888", lw=0.7, linestyle=":")
-        ax.text(xd(W1) - 10, y, lbl, ha="right", va="center", fontsize=8, color="#555555")
+        ax.plot([xd(W1) + 8, xd(0) + 6], [y, y], color="#888888", lw=0.7, linestyle=":")
+        ax.text(xd(W1) - 8, y + 7, lbl, ha="right", va="bottom", fontsize=8, color="#555555",
+                bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.9))
     ax.text(xd(W2 / 2 + off), ridge + 8, f"ridge ≈ +{ft_in(ridge)}  (max 30')",
             ha="center", fontsize=8, color="#555555")
 
@@ -900,8 +943,9 @@ def south_elevation():
                            facecolor="#dfeefb", edgecolor="#4a6172", lw=1))
     ax.add_patch(Rectangle((xd(W1 / 2 + 24 - off / 2), ff + 30), 48, 48,
                            facecolor="#dfeefb", edgecolor="#4a6172", lw=1))
-    ax.text(xd(W1 / 2 - off / 2), ff + 20, "bedroom egress", ha="center",
-            fontsize=7, color="#4a6172")
+    ax.text(xd(W1 / 2 - off / 2), ff + 8, "bedroom egress", ha="center",
+            fontsize=7, color="#4a6172",
+            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.9))
 
     if sec.get("balcony"):
         bd = sec.get("balcony_depth", 48)
@@ -911,7 +955,7 @@ def south_elevation():
                                edgecolor="#553311", lw=1.0, zorder=5))
         ax.plot([xd(bx + bd), xd(bx + bd)], [sf, sf + 42], color="#555555", lw=1.2, zorder=5)
         ax.plot([xd(bx), xd(bx + bd)], [sf + 42, sf + 42], color="#555555", lw=1.2, zorder=5)
-        ax.text(xd(bx + bd / 2), sf + 50, "balcony", ha="center", fontsize=7,
+        ax.text(xd(bx + bd / 2), sf - 18, "balcony", ha="center", fontsize=7,
                 color="#3d2e1a")
 
     if shape == "straight":
@@ -944,12 +988,13 @@ def south_elevation():
         for i in range(0, g["risers"], 2):
             y = i * riser_h
             ax.plot([xd(cx + r), xd(cx - r)], [y, y], color="#888888", lw=0.5)
-        ax.text(xd(cx), st["total_rise"] / 2,
-                f"SPIRAL\nØ{ft_in(g['diameter'])}\n{g['risers']} risers\n@ {riser_h:.2f}\"",
-                ha="center", va="center", fontsize=8)
+        ax.text(xd(cx - r) + 14, st["total_rise"] * 0.72,
+                f"SPIRAL\nØ{ft_in(g['diameter'])}\n{g['risers']} @ {riser_h:.2f}\"",
+                ha="left", va="center", fontsize=7.5,
+                bbox=dict(boxstyle="round", fc="white", ec="#888888", alpha=0.92))
         ax.plot([xd(off + st["top_landing"]), xd(off)],
                 [st["total_rise"], st["total_rise"]], color="#333333", lw=2.0)
-        xmin = xd(W1 + 40) - 40
+        xmin = min(xd(W1 + 40) - 40, xd(cx - r) - 20)
     else:
         run = g["tread"]
         x_top = off + st["top_landing"]
@@ -979,12 +1024,12 @@ def south_elevation():
                 ha="center", va="center", fontsize=7, color="#555555")
         xmin = xd(W1 + 90)
 
-    ax.text(xd(off + W2 / 2), -22, g["summary"] + " | guard 42\", handrail 34–38\"",
-            fontsize=8, ha="center")
-    ax.text(xd(0) + 30, 10, "E →", fontsize=10, weight="bold")
-    ax.text(xd(W1) - 30, 10, "← W", fontsize=10, weight="bold")
-    ax.set_xlim(xmin, xd(0) + 80)
-    ax.set_ylim(-40, ridge + 40)
+    ax.text(xd(off + W2 / 2), -28, g["summary"] + " | guard 42\", handrail 34–38\"",
+            fontsize=7.5, ha="center")
+    ax.text(xd(0) + 30, -8, "E →", fontsize=10, weight="bold")
+    ax.text(xd(W1) - 30, -8, "← W", fontsize=10, weight="bold")
+    ax.set_xlim(xmin, xd(0) + 100)
+    ax.set_ylim(-48, ridge + 40)
     fig.savefig(out_path("south-elevation.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
     return {"second_ff_in": sf, "ridge_ft": ridge / 12.0}
@@ -1057,8 +1102,7 @@ def west_elevation():
                            edgecolor="#555555", lw=1.2, zorder=2))
     ax.add_patch(Rectangle((cor_d - 4, ff + 6), 4, 80, facecolor="#dfeefb",
                            edgecolor="#1d4ed8", lw=1.2, zorder=3))
-    ax.text(cor_d / 2, ff + c1 / 2,
-            f"CORRIDOR\nbump-out\n({ft_in(door_w)} {door_short}\non south face)",
+    ax.text(cor_d / 2, ff + c1 / 2 + 10, "CORRIDOR\nbump-out",
             ha="center", va="center", fontsize=7, color="#333333", zorder=4)
 
     # first-floor main-block west wall
@@ -1083,15 +1127,10 @@ def west_elevation():
         # Align with studio portion of west wall (south of bath/kitchenette)
         bathd = sec.get("bath_interior_depth", 60)
         sy0 = EXT + bathd + INT + 16
-        if sec.get("kitchenette"):
-            sy0 = EXT + bathd + INT + 16
         ax.add_patch(Rectangle((sy0, sf), sw, sh, facecolor="#b8d4f0",
                                edgecolor="#1d4ed8", lw=1.5, zorder=4))
         ax.plot([sy0 + sw / 2, sy0 + sw / 2], [sf, sf + sh],
                 color="#1d4ed8", lw=1.2, zorder=5)
-        ax.text(sy0 + sw / 2, sf + sh / 2,
-                f"SLIDING DOORS\n{ft_in(sw)} × {ft_in(sh)}",
-                ha="center", va="center", fontsize=8, color="#0b3d91", zorder=5)
         if sec.get("balcony"):
             bw = sec.get("balcony_width", 120)
             bd = sec.get("balcony_depth", 48)
@@ -1103,18 +1142,27 @@ def west_elevation():
             ax.plot([by, by + bw], [sf + 42, sf + 42], color="#333333", lw=1.6, zorder=6)
             ax.plot([by, by], [sf, sf + 42], color="#333333", lw=1.4, zorder=6)
             ax.plot([by + bw, by + bw], [sf, sf + 42], color="#333333", lw=1.4, zorder=6)
-            ax.text(by + bw / 2, sf + 52,
-                    f"BALCONY  {ft_in(bw)} wide × {ft_in(bd)} deep  ·  guard 42\"",
-                    ha="center", fontsize=7.5, color="#3d2e1a", zorder=6)
+            # callout above railing, further left (clear of 2nd FF label)
+            ax.text(max(8, by - 40), sf + 58,
+                    f"slider {ft_in(sw)} × {ft_in(sh)}\n"
+                    f"balcony {ft_in(bw)} × {ft_in(bd)}\nguard 42\"",
+                    ha="right", va="bottom", fontsize=7.5, color="#0b3d91", zorder=7,
+                    bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
+        else:
+            ax.text(sy0 - 8, sf + sh / 2,
+                    f"SLIDER\n{ft_in(sw)} × {ft_in(sh)}",
+                    ha="right", va="center", fontsize=7.5, color="#0b3d91", zorder=7,
+                    bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
     elif sec.get("furniture_window"):
         fw = sec.get("furniture_window_width", 72)
         fh = sec.get("furniture_window_height", 60)
         sill = sf + sec.get("furniture_window_sill", 24)
         ax.add_patch(Rectangle((D / 2 - fw / 2, sill), fw, fh, facecolor="#b8d4f0",
                                edgecolor="#1d4ed8", lw=1.5, zorder=4))
-        ax.text(D / 2, sill + fh / 2,
-                f"FURNITURE ACCESS\n{ft_in(fw)} × {ft_in(fh)}\noperable",
-                ha="center", va="center", fontsize=8, color="#0b3d91", zorder=5)
+        ax.text(D / 2, sill + fh + 8,
+                f"FURNITURE ACCESS  {ft_in(fw)} × {ft_in(fh)}",
+                ha="center", va="bottom", fontsize=7.5, color="#0b3d91", zorder=5,
+                bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
     else:
         ax.add_patch(Rectangle((D / 2 + 10, sf + 36), 48, 48, facecolor="#dfeefb",
                                edgecolor="#4a6172", lw=1, zorder=4))
@@ -1125,15 +1173,16 @@ def west_elevation():
 
     for y, lbl in [(ff, f'1st FF  +{ft_in(ff)}'), (sf, f'2nd FF  +{ft_in(sf)}'),
                    (plate2, f'2nd plate  +{ft_in(plate2)}')]:
-        ax.plot([-20, D + 20], [y, y], color="#888888", lw=0.7, linestyle=":")
-        ax.text(-24, y, lbl, ha="right", va="center", fontsize=8, color="#555555")
-    ax.text(mid, ridge + 8, f"ridge ≈ +{ft_in(ridge)}  (max 30')",
+        ax.plot([0, D + 20], [y, y], color="#888888", lw=0.7, linestyle=":")
+        ax.text(-8, y + 7, lbl, ha="right", va="bottom", fontsize=8, color="#555555",
+                bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.9))
+    ax.text(mid, ridge + 10, f"ridge ≈ +{ft_in(ridge)}  (max 30')",
             ha="center", fontsize=8, color="#555555")
     if abs(cant_in) >= 2:
-        ax.text(D + 10, sf - fl / 2, "2'-6\" cantilever\n(2nd fl. west face\ntoward viewer)",
+        ax.text(D + 14, sf + c2 / 2, "2'-6\" cantilever\n(2nd fl. west face\ntoward viewer)",
                 fontsize=7, color="#1d4ed8", va="center")
     else:
-        ax.text(D + 10, sf - fl / 2, "walls flush\n(5' setback both floors)",
+        ax.text(D + 14, sf + c2 / 2, "walls flush\n(5' setback both floors)",
                 fontsize=7, color="#2f7d2f", va="center")
 
     if shape == "L":
@@ -1168,17 +1217,17 @@ def west_elevation():
                 ha="center", va="center", fontsize=7.5, color="#555555")
     else:
         # Spiral is on the far (east) side of the south wall — dashed ghost
-        ax.add_patch(Circle((D + 20, st["total_rise"] / 2), 28, fill=False,
+        ax.add_patch(Circle((D + 36, st["total_rise"] / 2), 22, fill=False,
                             edgecolor="#666666", lw=1.2, linestyle="--", zorder=4))
-        ax.text(D + 20, st["total_rise"] / 2,
-                f"spiral\n(SE corner,\nfar side)",
-                ha="center", va="center", fontsize=7.5, color="#555555")
+        ax.text(D + 64, st["total_rise"] * 0.55,
+                "spiral\n(SE corner,\nfar side)",
+                ha="left", va="center", fontsize=7.5, color="#555555")
 
-    ax.text(D / 2, -28, g["summary"], fontsize=8, ha="center")
-    ax.text(-house_d / 2, -28, "← N (existing house)", fontsize=10, weight="bold")
-    ax.text(D + 20, -28, "S (backyard) →", fontsize=10, weight="bold")
-    ax.set_xlim(-house_d - 80, south_extent + 20)
-    ax.set_ylim(-50, ridge + 40)
+    ax.text(-house_d / 2, -22, "← N (existing house)", fontsize=10, weight="bold")
+    ax.text(D + 20, -22, "S (backyard) →", fontsize=10, weight="bold")
+    ax.text(D / 2, -44, g["summary"], fontsize=7.5, ha="center", color="#444444")
+    ax.set_xlim(-house_d - 80, south_extent + 50)
+    ax.set_ylim(-62, ridge + 40)
     fig.savefig(out_path("west-elevation.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
     return {"cantilever_in": off + W2 - W1, "corridor_depth_in": cor_d}
