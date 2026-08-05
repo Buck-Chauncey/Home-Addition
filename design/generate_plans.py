@@ -317,25 +317,43 @@ def first_floor():
     W, D = f["main_block_ext_width"], f["main_block_ext_depth"]
     nz = f["north_zone_interior_depth"]
     bathw = f["bath_interior_width"]
-    closd = f["closet_interior_depth"]
+    closd = f.get("closet_interior_depth", 30)
     cor_ns = f["corridor_interior_ns"]
-    slider = f["slider_width"]
+    yard_door = f.get("yard_door", "slider")
+    door_w = f.get("yard_door_width", f.get("slider_width", 72))
+    bath_fix = f.get("bath_fixtures", "tub")
+    closet_style = f.get("closet_style", "east_west")
+    lean = closet_style == "reach_in_west" or closd == 0
 
     hx_east = h["east_face_local_x"]
     x_bd = h["bedroom_dining_wall_local_x"]
     x_dk = h["dining_kitchen_wall_local_x"]
     din_e, din_w = x_bd + 4, x_dk - 4.5
 
-    fig, ax = base_axes(
+    door_lbl = (f'{ft_in(door_w)} DOUBLE DOORS → backyard' if yard_door == "double"
+                else f'{ft_in(door_w)} DOUBLE SLIDER → backyard')
+    title = (
+        f"First floor — LEAN: bedroom + shower bath; dining corridor with {door_lbl.split('→')[0].strip()}\n"
+        f"east face at 5'-0\" setback; {f['ceiling_height_ft']:.0f}'-0\" ceilings; "
+        f"main block {ft_in(W)} × {ft_in(D)}"
+        if lean else
         "First floor — bedroom + full bath + E-W closet; wide corridor off the DINING ROOM\n"
-        "with 6'-0\" double slider to the backyard; east face at 5'-0\" setback; 9'-0\" ceilings")
+        f"with {door_lbl}; east face at 5'-0\" setback; 9'-0\" ceilings"
+    )
+    fig, ax = base_axes(title)
 
     iw, idp = W - 2 * EXT, D - 2 * EXT
     entryw = iw - bathw - INT
     y_zone = EXT + nz
-    y_clos = y_zone + INT + closd
-    y_bed = y_clos + INT
-    bedd = D - EXT - y_bed
+    if lean:
+        y_bed = y_zone + INT
+        bedd = D - EXT - y_bed
+        entry_south = y_zone
+    else:
+        y_clos = y_zone + INT + closd
+        y_bed = y_clos + INT
+        bedd = D - EXT - y_bed
+        entry_south = y_clos
     x_bath = EXT + bathw
     cor_w_int = din_w
     cor_x1 = cor_w_int + EXT
@@ -352,13 +370,14 @@ def first_floor():
             ha="center", fontsize=9, color="#777777")
 
     room(ax, EXT, EXT, bathw, nz, "BATH 1", f"{ft_in(bathw)} × {ft_in(nz)}")
-    room(ax, EXT, y_zone + INT, bathw, closd, "CLOSET (sliders)",
-         f"{ft_in(bathw)} × {ft_in(closd)}", fs=8)
-    ax.add_patch(Rectangle((x_bath + INT, 0), entryw, y_clos, facecolor=ROOM_COLOR,
+    if not lean:
+        room(ax, EXT, y_zone + INT, bathw, closd, "CLOSET (sliders)",
+             f"{ft_in(bathw)} × {ft_in(closd)}", fs=8)
+    ax.add_patch(Rectangle((x_bath + INT, 0), entryw, entry_south, facecolor=ROOM_COLOR,
                            edgecolor="none", zorder=1))
     ax.add_patch(Rectangle((W - EXT, 0), cor_w_int - W + EXT, cor_ns,
                            facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
-    ax.text(x_bath + INT + entryw / 2, (y_zone + y_clos) / 2, "ENTRY", ha="center",
+    ax.text(x_bath + INT + entryw / 2, entry_south / 2, "ENTRY", ha="center",
             va="center", fontsize=8, color="#333333", zorder=5, rotation=90)
     ax.text((W + cor_w_int) / 2, cor_ns / 2, "CORRIDOR\n(open to dining)", ha="center",
             va="center", fontsize=7.5, color="#333333", zorder=5)
@@ -372,44 +391,60 @@ def first_floor():
     wall_rect(ax, W - EXT, cor_ns + EXT, EXT, D - cor_ns - EXT)
     wall_rect(ax, W - EXT, cor_ns, cor_x1 - W + EXT, EXT)
     wall_rect(ax, cor_w_int, 0, EXT, cor_ns + EXT)
-    wall_rect(ax, EXT, y_zone, bathw, INT)
-    wall_rect(ax, x_bath, EXT, INT, y_clos - EXT)
-    wall_rect(ax, EXT, y_clos, iw, INT)
+    wall_rect(ax, x_bath, EXT, INT, entry_south - EXT)  # bath / entry
+    if lean:
+        wall_rect(ax, EXT, y_zone, iw, INT)              # bath+entry / bedroom
+    else:
+        wall_rect(ax, EXT, y_zone, bathw, INT)           # bath / closet
+        wall_rect(ax, EXT, entry_south, iw, INT)         # closet+entry / bedroom
 
     ax.plot([din_e, cor_w_int], [0, 0], color="#e07000", lw=3, zorder=6)
     ax.text((din_e + cor_w_int) / 2, -16,
             f"existing dining rear wall opened {ft_in(cor_w_int - din_e)} (new header)",
             ha="center", fontsize=8, color="#8a4b00", zorder=6,
             bbox=dict(boxstyle="round", fc="white", ec="none", alpha=0.8))
-    ax.annotate("", xy=(x_bath + INT + entryw / 2 - 10, y_clos - 24),
+    ax.annotate("", xy=(x_bath + INT + entryw / 2 - 10, entry_south - 16),
                 xytext=((din_e + cor_w_int) / 2, -40),
                 arrowprops=dict(arrowstyle="-|>", color="#2f7d2f", lw=1.6,
                                 connectionstyle="arc3,rad=0.3"), zorder=6)
 
     door(ax, x_bath, EXT + nz - 34, 30, horizontal=False)
-    door(ax, x_bath + INT + 5, y_clos, 32, horizontal=True)
-    door(ax, EXT + bathw / 2 - 30, y_clos, 60, horizontal=True)
-    ax.text(EXT + bathw / 2, y_clos + INT + 4, "closet sliders", ha="center",
-            fontsize=6.5, color="#666666", zorder=6)
+    door(ax, x_bath + INT + 5, y_zone if lean else entry_south, 32, horizontal=True)
+    if not lean:
+        door(ax, EXT + bathw / 2 - 30, entry_south, 60, horizontal=True)
+        ax.text(EXT + bathw / 2, entry_south + INT + 4, "closet sliders", ha="center",
+                fontsize=6.5, color="#666666", zorder=6)
+    else:
+        # reach-in closet on west wall of bedroom
+        rw = f.get("reach_in_width", 60)
+        rd = f.get("reach_in_depth", 24)
+        fixture(ax, W - EXT - rd, y_bed + 12, rd, rw, "REACH-IN\nCLOSET")
 
     window(ax, EXT + iw / 2 - 24, D - EXT, 48, horizontal=True)
     ax.text(EXT + iw / 2, D + 4, "egress window (CRC R310)",
             ha="center", fontsize=7, color="#4a6172")
     window(ax, W - EXT, y_bed + bedd / 2 - 18, 36, horizontal=False)
-    sl_x = (W - EXT + cor_w_int) / 2 - slider / 2
-    window(ax, sl_x, cor_ns, slider, horizontal=True)
-    ax.plot([sl_x + slider / 2, sl_x + slider / 2], [cor_ns, cor_ns + EXT],
-            color="#4a6172", lw=0.8, zorder=5)
-    ax.annotate("", xy=(sl_x + slider / 2 + 26, cor_ns + EXT + 16),
-                xytext=(sl_x + slider / 2 - 26, cor_ns + EXT + 16),
-                arrowprops=dict(arrowstyle="<->", color="#1d4ed8", lw=1.0))
-    ax.text(sl_x + slider / 2, cor_ns + EXT + 22,
-            f"{ft_in(slider)} DOUBLE SLIDER → backyard", ha="center", fontsize=7.5,
-            color="#1d4ed8")
 
-    fixture(ax, EXT, EXT + 4, 30, 60, "TUB\n30×60")
-    fixture(ax, EXT + 34, EXT, 30, 28, "WC")
-    fixture(ax, x_bath - 62, y_zone - 22, 60, 22, "DOUBLE VANITY 60\"")
+    # yard door in corridor south wall
+    yd_x = (W - EXT + cor_w_int) / 2 - door_w / 2
+    window(ax, yd_x, cor_ns, door_w, horizontal=True)
+    if yard_door == "double":
+        ax.plot([yd_x + door_w / 2, yd_x + door_w / 2], [cor_ns, cor_ns + EXT],
+                color="#4a6172", lw=1.0, zorder=5)
+    ax.annotate("", xy=(yd_x + door_w / 2 + 26, cor_ns + EXT + 16),
+                xytext=(yd_x + door_w / 2 - 26, cor_ns + EXT + 16),
+                arrowprops=dict(arrowstyle="<->", color="#1d4ed8", lw=1.0))
+    ax.text(yd_x + door_w / 2, cor_ns + EXT + 22, door_lbl,
+            ha="center", fontsize=7.5, color="#1d4ed8")
+
+    if bath_fix == "shower":
+        fixture(ax, EXT, EXT + 4, 36, 36, "SHOWER\n36×36")
+        fixture(ax, EXT + 42, EXT, 30, 28, "WC")
+        fixture(ax, x_bath - 40, y_zone - 22, 36, 22, "VANITY 36\"")
+    else:
+        fixture(ax, EXT, EXT + 4, 30, 60, "TUB\n30×60")
+        fixture(ax, EXT + 34, EXT, 30, 28, "WC")
+        fixture(ax, x_bath - 62, y_zone - 22, 60, 22, "DOUBLE VANITY 60\"")
     ax.text(EXT + bathw / 2, -10, "bath wet wall backs existing bedroom",
             ha="center", fontsize=7, color="#4a6172",
             bbox=dict(boxstyle="round", fc="white", ec="none", alpha=0.8))
@@ -439,6 +474,7 @@ def first_floor():
         "interior_sqft": (iw * idp + (cor_w_int - (W - EXT)) * cor_ns) / 144.0,
         "dining_opening_in": cor_w_int - din_e,
         "bedroom": (iw, bedd),
+        "lean": lean,
     }
 
 
@@ -453,53 +489,89 @@ def second_floor():
     off = s["east_face_offset_from_ground_east_face"]
     W, D = s["ext_width"], s["ext_depth"]
     bathd = s["bath_interior_depth"]
+    bath_type = s.get("bath_type", "shower")  # shower | toilet_only
     shape = stair_shape()
     title_stair = {"L": "L-stair access", "straight": "straight exterior-stair access",
                    "spiral": "spiral-stair access + furniture window"}[shape]
+    room_title = ("room + toilet only" if bath_type == "toilet_only"
+                  else "office + shower bath")
 
     fig, ax = base_axes(
-        f"Second floor — office + shower bath, {title_stair}\n"
+        f"Second floor — {room_title}, {title_stair}\n"
         "East face at 9'-0\" side setback (conforming); 8'-0\" ceilings")
 
     iw, idp = W - 2 * EXT, D - 2 * EXT
-    offd = idp - bathd - INT
     x0 = off
     wall_rect(ax, x0, 0, W, EXT)
     wall_rect(ax, x0, D - EXT, W, EXT)
     wall_rect(ax, x0, 0, EXT, D)
     wall_rect(ax, x0 + W - EXT, 0, EXT, D)
-    y_zone = EXT + bathd
-    wall_rect(ax, x0 + EXT, y_zone, iw, INT)
 
-    room(ax, x0 + EXT, EXT, iw, bathd, "BATH 2",
-         f"{ft_in(iw)} × {ft_in(bathd)}", dy=14)
-    room(ax, x0 + EXT, y_zone + INT, iw, offd, "OFFICE",
-         f"{ft_in(iw)} × {ft_in(offd)}")
+    if bath_type == "toilet_only":
+        # Compact powder in NE corner, stacked over Bath 1 wet wall
+        bathw = s.get("bath_interior_width", 54)
+        y_zone = EXT + bathd
+        wall_rect(ax, x0 + EXT, y_zone, bathw, INT)
+        wall_rect(ax, x0 + EXT + bathw, EXT, INT, bathd)
+        room(ax, x0 + EXT, EXT, bathw, bathd, "WC",
+             f"{ft_in(bathw)} × {ft_in(bathd)}\n(toilet + lav)", fs=8, dy=4)
+        # open room fills the rest
+        ax.add_patch(Rectangle((x0 + EXT, y_zone + INT), iw, idp - bathd - INT,
+                               facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
+        ax.add_patch(Rectangle((x0 + EXT + bathw + INT, EXT),
+                               iw - bathw - INT, bathd + INT,
+                               facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
+        room_w, room_d = iw, idp
+        ax.text(x0 + EXT + iw / 2, y_zone + INT + (idp - bathd - INT) / 2,
+                f"ROOM\n{ft_in(iw)} × {ft_in(idp)} clear\n(open plan)",
+                ha="center", va="center", fontsize=10, zorder=5, color="#333333")
+        fixture(ax, x0 + EXT, EXT, 30, 28, "WC")
+        fixture(ax, x0 + EXT + bathw - 22, EXT + 4, 20, 18, "LAV")
+        door(ax, x0 + EXT + bathw / 2 - 12, y_zone, 28, horizontal=True)
+        fixture(ax, x0 + EXT + iw - 66, y_zone + INT + 20, 60, 30, "DESK")
+        west_win_y0 = y_zone + INT + 20
+        west_win_span = idp - bathd - INT - 40
+    else:
+        y_zone = EXT + bathd
+        wall_rect(ax, x0 + EXT, y_zone, iw, INT)
+        offd = idp - bathd - INT
+        room(ax, x0 + EXT, EXT, iw, bathd, "BATH 2",
+             f"{ft_in(iw)} × {ft_in(bathd)}", dy=14)
+        room(ax, x0 + EXT, y_zone + INT, iw, offd, "OFFICE",
+             f"{ft_in(iw)} × {ft_in(offd)}")
+        fixture(ax, x0 + EXT, EXT, 36, 36, "SHOWER\n36×36")
+        fixture(ax, x0 + EXT + 42, EXT, 30, 28, "WC")
+        fixture(ax, x0 + EXT + 78, EXT, 48, 22, "VANITY 48\"")
+        fixture(ax, x0 + EXT + iw - 66, y_zone + INT + 16, 60, 30, "DESK")
+        door(ax, x0 + EXT + 16, y_zone, 30, horizontal=True)
+        west_win_y0 = y_zone + INT + (offd - 48) / 2
+        west_win_span = 48
+        bathw = iw
 
-    fixture(ax, x0 + EXT, EXT, 36, 36, "SHOWER\n36×36")
-    fixture(ax, x0 + EXT + 42, EXT, 30, 28, "WC")
-    fixture(ax, x0 + EXT + 78, EXT, 48, 22, "VANITY 48\"")
-    fixture(ax, x0 + EXT + iw - 66, y_zone + INT + 16, 60, 30, "DESK")
-
-    door(ax, x0 + EXT + 16, y_zone, 30, horizontal=True)
     entry_x = x0 + EXT + 8
     door(ax, entry_x, D - EXT, 36, horizontal=True)
     ax.text(entry_x + 18, D + 6, "ENTRY", ha="center", fontsize=8, color="#8a4b00")
 
     window(ax, x0 + EXT + iw / 2 - 30, D - EXT, 60, horizontal=True)
-    window(ax, x0 + EXT + iw - 40, 0, 30, horizontal=True)
+    if bath_type != "toilet_only":
+        window(ax, x0 + EXT + iw - 40, 0, 30, horizontal=True)
+    else:
+        window(ax, x0 + EXT + bathw + INT + 10, 0, 30, horizontal=True)
 
-    # West window — enlarged for furniture access on spiral variant
     if s.get("furniture_window"):
         fw = s.get("furniture_window_width", 72)
-        window(ax, x0 + W - EXT, y_zone + INT + (offd - fw) / 2, fw, horizontal=False)
-        ax.text(x0 + W + 8, y_zone + INT + offd / 2,
+        # place along west wall in the open room
+        wy = max(EXT + 20, (EXT + idp - fw) / 2 + EXT)
+        if bath_type == "toilet_only":
+            wy = EXT + bathd + INT + 16
+        window(ax, x0 + W - EXT, wy, fw, horizontal=False)
+        ax.text(x0 + W + 8, wy + fw / 2,
                 f"FURNITURE ACCESS\n{ft_in(fw)} × {ft_in(s.get('furniture_window_height', 60))}\n"
                 f"operable window/door\n(desk, mattress, etc.)",
                 ha="left", va="center", fontsize=7.5, color="#1d4ed8",
                 bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
     else:
-        window(ax, x0 + W - EXT, y_zone + INT + offd / 2 - 24, 48, horizontal=False)
+        window(ax, x0 + W - EXT, west_win_y0, min(48, west_win_span), horizontal=False)
 
     ax.add_patch(Rectangle((0, 0), f["main_block_ext_width"], f["main_block_ext_depth"],
                            fill=False, edgecolor="#999999", lw=1.0, linestyle=":", zorder=0))
@@ -815,7 +887,9 @@ def west_elevation():
     ridge = plate2 + 10 + (W2 / 2) * pitch / 12.0
     eaves = plate2 + 8
     cor_d = f["corridor_interior_ns"] + EXT
-    slider = f["slider_width"]
+    door_w = f.get("yard_door_width", f.get("slider_width", 72))
+    yard_door = f.get("yard_door", "slider")
+    door_short = ("double doors" if yard_door == "double" else "slider")
     g = stair_geom()
     riser_h = g["riser"]
     shape = g["shape"]
@@ -846,7 +920,8 @@ def west_elevation():
                            edgecolor="#555555", lw=1.2, zorder=2))
     ax.add_patch(Rectangle((cor_d - 4, ff + 6), 4, 80, facecolor="#dfeefb",
                            edgecolor="#1d4ed8", lw=1.2, zorder=3))
-    ax.text(cor_d / 2, ff + c1 / 2, f"CORRIDOR\nbump-out\n({ft_in(slider)} slider\non south face)",
+    ax.text(cor_d / 2, ff + c1 / 2,
+            f"CORRIDOR\nbump-out\n({ft_in(door_w)} {door_short}\non south face)",
             ha="center", va="center", fontsize=7, color="#333333", zorder=4)
 
     ax.add_patch(Rectangle((cor_d, 0), D - cor_d, ff + c1 + fl, facecolor="#d9ceb8",

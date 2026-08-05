@@ -1,29 +1,25 @@
-# Cost estimates by stair variant
+# Cost estimates by design variant
 
 5916 Panama Ave addition — preliminary Bay Area contractor-built estimates
-(mid/standard finishes, 2026). All three variants share the same ~595 sq ft
-gross floor area, two baths, foundation, and corridor/slider. **Only the
-exterior stair (and the spiral’s furniture window) differ.**
-
-Ranges include ~10% contingency. Soft costs (architect, survey, permits) are
-the same across variants.
+(mid/standard finishes, 2026). Ranges include ~10% contingency.
 
 ## Summary comparison
 
-| | **V0** straight stair | **L stair** | **spiral_stairs** |
-| --- | ---: | ---: | ---: |
-| Yard intrusion | ~9.8′ past SW corner | ~4′ (landings only) | ~5′ (spiral Ø) |
-| Stair comfort / furniture | Best for daily use; awkward for desks | Good daily use; furniture still hard | People only; desks via 6′×5′ west window |
-| Stair construction | Simplest | Corner landing +$1–3k | Prefab spiral often cheaper than site-built L |
-| **Low total** | **≈ $298k** | **≈ $299k** | **≈ $292k** |
-| **High total** | **≈ $482k** | **≈ $484k** | **≈ $476k** |
-| Δ vs L stair (midpoint) | ≈ −$1.5k | baseline | ≈ −$7.5k |
+| | **V0** | **L stair** | **spiral_stairs** | **lean** |
+| --- | ---: | ---: | ---: | ---: |
+| New gross floor area | ~595 sf | ~595 sf | ~595 sf | **~501 sf** |
+| Footprint | ~327 sf | ~327 sf | ~327 sf | **~276 sf** |
+| Upstairs wet room | Full bath | Full bath | Full bath | **Toilet + lav only** |
+| Yard door | 6′ slider | 6′ slider | 6′ slider | **5′ double doors** |
+| Stair | Straight (~9.8′ into yard) | L (~4′) | Spiral Ø5′ (~5′) | **Spiral Ø5′ (~5′)** |
+| **Low total** | **≈ $298k** | **≈ $299k** | **≈ $292k** | **≈ $210k** |
+| **High total** | **≈ $482k** | **≈ $484k** | **≈ $476k** | **≈ $355k** |
 
-The spiral is usually the cheapest stair option if a stock/prefab unit is used;
-the straight run is simplest to build but costs yard space; the L-stair is the
-best everyday compromise for yard + comfort.
+**Lean is the clear cost winner** — roughly **$80k–$130k less** than the full two-bath variants, mainly from a smaller shell, no upstairs shower bath, simpler Bath 1, and cheaper yard doors.
 
-## Shared soft costs (all variants)
+---
+
+## Soft costs (all variants)
 
 | Line item | Low | High |
 | --- | ---: | ---: |
@@ -32,7 +28,11 @@ best everyday compromise for yard + comfort.
 | Permits, plan check, city + school fees | $10,000 | $18,000 |
 | **Soft-cost subtotal** | **$31,000** | **$54,000** |
 
-## Shared construction (all variants)
+---
+
+## Full variants (V0 / L stair / spiral_stairs) — shared shell
+
+~595 sq ft gross, two full baths, 14′×21′-6″ main block, 6′ slider.
 
 | Line item | Low | High |
 | --- | ---: | ---: |
@@ -42,7 +42,7 @@ best everyday compromise for yard + comfort.
 | Roofing + gutters + tie-in | $10,000 | $16,000 |
 | Windows + exterior doors (base, excl. furniture window) | $12,000 | $20,000 |
 | Siding, exterior trim, paint | $16,000 | $26,000 |
-| Plumbing rough + fixtures (2 baths, stacked) | $28,000 | $45,000 |
+| Plumbing rough + fixtures (2 full baths, stacked) | $28,000 | $45,000 |
 | Electrical | $14,000 | $22,000 |
 | HVAC (2-zone mini-split) | $9,000 | $14,000 |
 | Insulation + drywall | $14,000 | $22,000 |
@@ -51,63 +51,73 @@ best everyday compromise for yard + comfort.
 | Dining-room wall opening + header | $6,000 | $12,000 |
 | **Shared construction subtotal** | **$225,000** | **$360,000** |
 
-## Variant-specific lines
+### Stair adders (full variants)
 
-### V0 — straight stair
+| Variant | Stair line | Low total | High total |
+| --- | --- | ---: | ---: |
+| V0 straight | $9k–$14k | ≈ $298k | ≈ $482k |
+| L stair | $11k–$18k | ≈ $299k | ≈ $484k |
+| spiral_stairs (+ 6′×5′ furniture window $3–6k) | $6k–$12k spiral | ≈ $292k | ≈ $476k |
 
-| Line item | Low | High |
-| --- | ---: | ---: |
-| Straight exterior stair, landing, guards | $9,000 | $14,000 |
-| Construction + stair | $234,000 | $374,000 |
-| Contingency 10% | $23,000 | $37,000 |
-| Soft costs | $31,000 | $54,000 |
-| **V0 total** | **≈ $298,000** | **≈ $482,000** |
+---
 
-### L stair — L around SW corner (baseline design)
+## Lean variant — smaller shell, toilet upstairs, spiral, double doors
 
-| Line item | Low | High |
-| --- | ---: | ---: |
-| L-stair, corner landing, guards (+$1–3k vs straight) | $11,000 | $18,000 |
-| Construction + stair | $236,000 | $378,000 |
-| Contingency 10% | $24,000 | $38,000 |
-| Soft costs | $31,000 | $54,000 |
-| **L stair total** | **≈ $299,000** | **≈ $484,000** |
-
-### spiral_stairs — spiral + furniture window
+~501 sq ft gross, 14′×18′ main block, shower bath downstairs, WC-only upstairs.
 
 | Line item | Low | High |
 | --- | ---: | ---: |
-| Prefab/code spiral, top landing, guards | $6,000 | $12,000 |
-| 6′×5′ operable furniture window/door (west) | $3,000 | $6,000 |
-| Construction + stair + window | $234,000 | $378,000 |
-| Contingency 10% | $23,000 | $38,000 |
+| Soft costs (same as above) | $31,000 | $54,000 |
+| Site prep, excavation, demo | $7,000 | $12,000 |
+| Foundation (crawlspace, ~276 sq ft) | $22,000 | $36,000 |
+| Framing labor + lumber (smaller two-story) | $40,000 | $58,000 |
+| Roofing + gutters + tie-in | $8,000 | $13,000 |
+| Windows + 5′ double doors + furniture window | $10,000 | $18,000 |
+| Siding, exterior trim, paint | $12,000 | $20,000 |
+| Plumbing (1 shower bath + upstairs WC/lav, stacked) | $16,000 | $28,000 |
+| Electrical | $11,000 | $18,000 |
+| HVAC (2-zone mini-split) | $8,000 | $13,000 |
+| Insulation + drywall | $11,000 | $18,000 |
+| Interior finishes | $12,000 | $20,000 |
+| Bath tile + finish (1 shower bath only) | $6,000 | $12,000 |
+| Dining-room wall opening + header | $6,000 | $12,000 |
+| Prefab spiral stair + landing + guards | $6,000 | $12,000 |
+| **Lean construction subtotal** | **$164,000** | **$278,000** |
+| Contingency 10% | $16,000 | $28,000 |
 | Soft costs | $31,000 | $54,000 |
-| **spiral_stairs total** | **≈ $292,000** | **≈ $476,000** |
+| **Lean total** | **≈ $210,000** | **≈ $355,000** |
 
-> Prefab spiral pricing varies widely ($4k–$15k installed). A custom ornamental
-> spiral can exceed the L-stair cost; the low end assumes a stock aluminum/steel
-> unit meeting CRC R311.7.10.1.
+### Where lean saves vs L stair (approx. midpoint)
 
-## What actually moves the needle (all variants)
+| Cut | Savings |
+| --- | ---: |
+| Smaller footprint / less shell | ~$35k–$55k |
+| No upstairs shower bath (WC only) | ~$25k–$40k |
+| Shower + single vanity vs tub + double | ~$8k–$15k |
+| 5′ double doors vs 6′ slider | ~$2k–$5k |
+| Prefab spiral vs site-built L | ~$2k–$6k |
+| **Total vs full L stair** | **~$80k–$130k** |
 
-In rough order of impact if you want to go cheaper later:
+---
 
-1. Owner-GC / self-perform select trades
-2. Bath 1: shower instead of tub; single vanity
-3. Slab-on-grade instead of crawlspace (if a floor-level step is OK)
-4. Stock windows; phase interior finishes
-5. Stair choice (spiral saves a little; straight saves almost nothing vs L)
+## Further cuts (any variant)
+
+1. Owner-GC / self-perform paint, floors, some finish  
+2. Slab-on-grade instead of crawlspace (if a floor step is OK)  
+3. Stock windows; phase closet built-ins  
+4. One-story only (drops the upstairs room entirely) — largest possible cut  
 
 ## Folder map
 
-| Folder | Stair | Plans |
-| --- | --- | --- |
-| [`V0/`](V0/) | Straight run (~9.8′ into yard) | first/second floor, site, S+W elev |
-| [`L stair/`](L%20stair/) | L around SW corner (~4′ projection) | same set |
-| [`spiral_stairs/`](spiral_stairs/) | Ø5′ spiral + 6′×5′ west furniture window | same set |
+| Folder | Notes |
+| --- | --- |
+| [`V0/`](V0/) | Straight stair, full program |
+| [`L stair/`](L%20stair/) | L-stair, full program |
+| [`spiral_stairs/`](spiral_stairs/) | Spiral + 6′×5′ furniture window, full program |
+| [`lean/`](lean/) | **Smaller shell, shower bath, upstairs toilet only, spiral, 5′ double doors** |
 
-Regenerate any variant:
 ```bash
+python3 generate_plans.py --params lean/params.json --out lean
 python3 generate_plans.py --params "L stair/params.json" --out "L stair"
 python3 generate_plans.py --params V0/params.json --out V0
 python3 generate_plans.py --params spiral_stairs/params.json --out spiral_stairs
