@@ -1,0 +1,101 @@
+{
+  "comment": "ADU + west balcony: studio ADU upstairs with kitchenette + full bath. Flush 5' east walls. West wall has sliding doors onto a balcony (replaces furniture window). Spiral stair.",
+  "walls": {
+    "exterior_thickness": 6.5,
+    "interior_thickness": 4.5
+  },
+  "setbacks": {
+    "east_pl_to_addition_ground_face_ft": 5.0,
+    "east_pl_to_addition_upper_face_ft": 5.0,
+    "existing_house_east_face_from_pl_ft": 4.375
+  },
+  "existing_house": {
+    "comment": "From the 2021 Compass marketing floor plan (approximate; field-verify).",
+    "east_face_local_x": -7.5,
+    "bedroom_dining_wall_local_x": 146,
+    "dining_kitchen_wall_local_x": 249,
+    "width_ft": 40.25,
+    "depth_ft": 30.5,
+    "living_sqft": 919
+  },
+  "first_floor": {
+    "main_block_ext_width": 168,
+    "main_block_ext_depth": 216,
+    "north_zone_interior_depth": 60,
+    "bath_interior_width": 96,
+    "closet_interior_depth": 0,
+    "closet_style": "reach_in_west",
+    "reach_in_depth": 24,
+    "reach_in_width": 60,
+    "corridor_interior_ns": 36,
+    "yard_door": "double",
+    "yard_door_width": 60,
+    "bath_fixtures": "shower",
+    "ceiling_height_ft": 9.0,
+    "corridor_note": "Primary-dwelling addition below: bedroom + shower bath + dining corridor with 5' double doors. ADU is the second floor."
+  },
+  "second_floor": {
+    "east_face_offset_from_ground_east_face": 0,
+    "ext_width": 168,
+    "ext_depth": 216,
+    "bath_type": "shower",
+    "bath_interior_depth": 60,
+    "bath_interior_width": 90,
+    "kitchenette": true,
+    "kitchenette_depth": 30,
+    "kitchenette_width": 96,
+    "ceiling_height_ft": 8.0,
+    "furniture_window": false,
+    "furniture_window_width": 60,
+    "furniture_window_height": 54,
+    "furniture_window_sill": 24,
+    "note": "Studio ADU: living/sleeping, kitchenette, full bath. West 6' slider onto balcony. Walls flush at 5' east setback. Spiral access.",
+    "west_slider": true,
+    "west_slider_width": 72,
+    "west_slider_height": 80,
+    "balcony": true,
+    "balcony_depth": 48,
+    "balcony_width": 120,
+    "balcony_note": "West balcony with 6' sliding doors from studio; guard 42\". Projects into side yard (clear of 5' west setback on this lot)."
+  },
+  "stair": {
+    "total_rise": 140,
+    "riser_max": 9.5,
+    "tread_run": 0,
+    "width": 0,
+    "top_landing": 48,
+    "shape": "spiral",
+    "diameter": 60,
+    "clear_width_at_handrail": 26,
+    "walkline_tread_min": 6.75,
+    "headroom_min": 78,
+    "note": "CRC R311.7.10.1 spiral at SE entry to ADU. Furniture via west sliding doors / balcony."
+  },
+  "levels": {
+    "first_finish_floor_above_grade": 18,
+    "floor_assembly_depth": 13.5,
+    "roof_pitch_in_12": 4
+  },
+  "site_ft": {
+    "lot_width": 50,
+    "lot_depth": 100,
+    "house_front_setback": 20,
+    "porch": {
+      "x0": 20,
+      "width": 13,
+      "depth": 5
+    },
+    "garage": {
+      "width": 11.25,
+      "length": 24,
+      "front_proud": 3
+    },
+    "shed": {
+      "x0": 12,
+      "width": 13.5,
+      "from_rear_pl": 6,
+      "depth": 10
+    },
+    "note": "Front setback assumed 20 ft (verify). ADU assumed eligible for flush 5' side walls \u2014 confirm with Planning."
+  }
+}
