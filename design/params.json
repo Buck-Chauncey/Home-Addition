@@ -1,0 +1,50 @@
+{
+  "comment": "All dimensions in inches unless noted. Orientation matches owner sketches: bottom of plan = north (existing house / Panama Ave side), left = east (property-line side), top = south (backyard).",
+  "walls": {
+    "exterior_thickness": 6.5,
+    "interior_thickness": 4.5
+  },
+  "setbacks": {
+    "east_pl_to_addition_ground_face_ft": 5.0,
+    "east_pl_to_addition_upper_face_ft": 9.0,
+    "existing_house_east_face_from_pl_ft": 4.375
+  },
+  "first_floor": {
+    "main_block_ext_width": 198,
+    "main_block_ext_depth": 228,
+    "north_zone_interior_depth": 72,
+    "bath_interior_width": 114,
+    "closet_interior_width": 42,
+    "corridor_interior_ns": 38,
+    "corridor_interior_ew": 102,
+    "ceiling_height_ft": 9.0
+  },
+  "second_floor": {
+    "east_face_offset_from_ground_east_face": 48,
+    "ext_width": 150,
+    "ext_depth": 228,
+    "bath_interior_depth": 66,
+    "ceiling_height_ft": 8.0
+  },
+  "stair": {
+    "total_rise": 140,
+    "riser_max": 7.75,
+    "tread_run": 10.5,
+    "width": 36,
+    "top_landing": 48,
+    "note": "Straight run along south wall, bottom at west, rising to the east; top landing at the second-floor entry door (SE corner)."
+  },
+  "levels": {
+    "first_finish_floor_above_grade": 18,
+    "floor_assembly_depth": 13.5,
+    "roof_pitch_in_12": 4
+  },
+  "site_ft": {
+    "lot_width": 50,
+    "lot_depth": 100,
+    "house_front_setback": 20,
+    "house_width": 28,
+    "house_depth": 38,
+    "note": "House rectangle is schematic (assessor footprint is irregular); field-verify rear-wall position."
+  }
+}
