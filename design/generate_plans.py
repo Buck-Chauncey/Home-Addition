@@ -130,6 +130,41 @@ def base_axes(title):
     return fig, ax
 
 
+def stair_geom():
+    """L-stair geometry in plan-local inches (x west of the addition's east
+    face, y south of the house rear wall). Rectangles are (x0, y0, w, h)."""
+    st = P["stair"]
+    D = P["first_floor"]["main_block_ext_depth"]
+    off = P["second_floor"]["east_face_offset_from_ground_east_face"]
+    risers = math.ceil(st["total_rise"] / st["riser_max"])
+    riser = st["total_rise"] / risers
+    up_r = st["upper_flight_risers"]
+    lo_r = risers - up_r
+    w, land, cland, tread = st["width"], st["top_landing"], st["corner_landing"], st["tread_run"]
+
+    up_x0 = off + land
+    up_len = (up_r - 1) * tread
+    lo_len = (lo_r - 1) * tread
+    cx = up_x0 + up_len                      # corner landing east face
+    return {
+        "risers": risers, "riser": riser, "up_r": up_r, "lo_r": lo_r,
+        "tread": tread, "width": w,
+        "top_landing": (off, D, land, land),
+        "upper": (up_x0, D, up_len, w),
+        "corner": (cx, D, cland, cland),
+        "lower": (cx, D - lo_len, w, lo_len),
+        "pad": (cx, D - lo_len - 36, w, 36),
+        "corner_height": st["total_rise"] - up_r * riser,
+    }
+
+
+def draw_stair_rect(ax, rect, color="#e8e8e8", scale=1.0, dx=0.0, dy=0.0):
+    x0, y0, w, h = [v * scale for v in rect]
+    ax.add_patch(Rectangle((x0 + dx, y0 + dy), w, h, facecolor=color,
+                           edgecolor="#666666", lw=0.9, zorder=2))
+    return x0 + dx, y0 + dy, w, h
+
+
 # ----------------------------------------------------------------------------
 # First floor
 # ----------------------------------------------------------------------------
@@ -345,29 +380,39 @@ def second_floor():
     fW = f["main_block_ext_width"]
     dim_h(ax, fW, x0 + W, -16, label=f"{ft_in(x0 + W - fW)} cantilever")
 
-    # exterior stair + landing along south wall
-    land = st["top_landing"]
-    treads = math.ceil(st["total_rise"] / st["riser_max"]) - 1
-    run = treads * st["tread_run"]
-    ly = D
-    ax.add_patch(Rectangle((x0, ly), land, land, facecolor="#d9d9d9",
-                           edgecolor="#666666", lw=1.0, zorder=2))
-    ax.text(x0 + land / 2, ly + land / 2, "LANDING\n4'×4'", ha="center",
-            va="center", fontsize=7)
-    sx = x0 + land
-    ax.add_patch(Rectangle((sx, ly), run, st["width"], facecolor="#e8e8e8",
-                           edgecolor="#666666", lw=1.0, zorder=2))
-    for i in range(1, treads):
-        tx = sx + i * st["tread_run"]
-        ax.plot([tx, tx], [ly, ly + st["width"]], color="#999999", lw=0.5)
-    ax.add_patch(FancyArrow(sx + run - 20, ly + st["width"] / 2, -(run - 45), 0,
-                            width=0.6, head_width=6, head_length=10, color="#444444"))
-    ax.text(sx + run / 2, ly + st["width"] + 6,
-            f"exterior stair: {treads + 1} risers @ {st['total_rise'] / (treads + 1):.2f}\", "
-            f"{treads} treads @ {st['tread_run']}\" — rises to the EAST (left)",
+    # L-shaped exterior stair wrapping the SW corner
+    g = stair_geom()
+    tl = draw_stair_rect(ax, g["top_landing"], color="#d9d9d9")
+    ax.text(tl[0] + tl[2] / 2, tl[1] + tl[3] / 2, "LANDING\n4'×4'", ha="center",
+            va="center", fontsize=7, zorder=5)
+    ux, uy, uw, uh = draw_stair_rect(ax, g["upper"])
+    for i in range(1, g["up_r"] - 1):
+        ax.plot([ux + i * g["tread"], ux + i * g["tread"]], [uy, uy + uh],
+                color="#999999", lw=0.5, zorder=3)
+    ax.add_patch(FancyArrow(ux + uw - 14, uy + uh / 2, -(uw - 28), 0,
+                            width=0.5, head_width=5, head_length=8, color="#444444",
+                            zorder=4))
+    cx, cy, cw, ch = draw_stair_rect(ax, g["corner"], color="#d0d0d0")
+    ax.text(cx + cw / 2, cy + ch / 2, "CORNER\n42\"×42\"", ha="center",
+            va="center", fontsize=6.5, zorder=5)
+    lx, ly, lw, lh = draw_stair_rect(ax, g["lower"])
+    for i in range(1, g["lo_r"] - 1):
+        ax.plot([lx, lx + lw], [ly + lh - i * g["tread"], ly + lh - i * g["tread"]],
+                color="#999999", lw=0.5, zorder=3)
+    ax.add_patch(FancyArrow(lx + lw / 2, ly + 14, 0, lh - 28,
+                            width=0.5, head_width=5, head_length=8, color="#444444",
+                            zorder=4))
+    px, py, pw, ph = draw_stair_rect(ax, g["pad"], color="#c8c8c8")
+    ax.text(px + pw / 2 + 18, py + ph / 2, "BOTTOM ↑ UP", ha="left", va="center",
+            fontsize=6.5, color="#555555")
+    ax.text((ux + cx + cw) / 2, cy + ch + 8,
+            f"L-stair: {g['risers']} risers @ {g['riser']:.2f}\" | "
+            f"upper {g['up_r']} along south, lower {g['lo_r']} along west\n"
+            f"(lower flight partly under 2'-6\" cantilever; yard stays clear)",
             ha="center", fontsize=7.5)
 
     # dimensions
+    land = st["top_landing"]
     dim_h(ax, x0, x0 + W, D + land + 14, offset=22)
     dim_v(ax, 0, D, x0 - 14, offset=-24, label=ft_in(D))
     dim_v(ax, 0, EXT + bathd + INT / 2, x0 - 14, offset=-10,
@@ -375,7 +420,7 @@ def second_floor():
     dim_h(ax, 0, x0, -16, label="4'-0\" offset")
 
     # setback annotation (above the building, clear of dimension lines)
-    sy = D + land + 34
+    sy = D + max(land, g["corner"][3]) + 34
     ax.annotate("", xy=(-108 + off, sy), xytext=(x0, sy),
                 arrowprops=dict(arrowstyle="<->", color="#b00000", lw=1.2))
     ax.text(x0 - 54, sy + 6, "9'-0\" upper-story side setback",
@@ -384,7 +429,7 @@ def second_floor():
             linestyle="--")
 
     compass(ax, off - 108, -70)
-    ax.set_xlim(off - 150, x0 + land + run + 40)
+    ax.set_xlim(off - 150, max(x0 + W, cx + cw) + 50)
     ax.set_ylim(-120, sy + 50)
     fig.savefig(os.path.join(HERE, "second-floor-plan.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -392,9 +437,12 @@ def second_floor():
     return {
         "plate_sqft": W * D / 144.0,
         "interior_sqft": iw * idp / 144.0,
-        "stair_run_in": run,
-        "treads": treads,
-        "riser_in": st["total_rise"] / (treads + 1),
+        "stair_run_in": g["upper"][2] + g["lower"][3],
+        "treads": g["risers"] - 1,
+        "riser_in": g["riser"],
+        "up_r": g["up_r"],
+        "lo_r": g["lo_r"],
+        "yard_projection_in": max(land, g["corner"][3]),
     }
 
 
@@ -490,17 +538,15 @@ def site_plan():
     ax.text(sx + sw2 / 2, ay + ad / 2 + 3.5, "2nd floor", ha="center",
             fontsize=8, color="#1d4ed8")
 
-    # exterior stair along south wall of addition
-    land = st["top_landing"] / 12.0
-    treads = math.ceil(st["total_rise"] / st["riser_max"]) - 1
-    run = treads * st["tread_run"] / 12.0
-    stw = st["width"] / 12.0
-    ax.add_patch(Rectangle((e_uf, ay + ad), land, land, facecolor="#bfbfbf",
-                           edgecolor="#555555"))
-    ax.add_patch(Rectangle((e_uf + land, ay + ad), run, stw, facecolor="#dddddd",
-                           edgecolor="#555555"))
-    ax.text(e_uf + land + run / 2, ay + ad + stw + 0.6,
-            "exterior stair (bottom W → top E)", fontsize=7, ha="center")
+    # L-shaped exterior stair wrapping the SW corner of the addition
+    g = stair_geom()
+    # stair_geom is in inches relative to addition east face / house rear wall;
+    # site plan uses feet with origin at the lot's east/north corner.
+    for key, color in [("top_landing", "#bfbfbf"), ("upper", "#dddddd"),
+                       ("corner", "#bfbfbf"), ("lower", "#dddddd"), ("pad", "#c8c8c8")]:
+        draw_stair_rect(ax, g[key], color=color, scale=1 / 12.0, dx=e_gf, dy=ay)
+    ax.text(e_gf + g["corner"][0] / 12.0 + 1.5, ay + ad + g["corner"][3] / 12.0 + 0.8,
+            "L-stair (hugs SW corner)", fontsize=7, ha="center")
 
     ax.annotate("", xy=(0, ay + ad / 2), xytext=(e_gf, ay + ad / 2),
                 arrowprops=dict(arrowstyle="<->", color="#b00000", lw=1.0))
@@ -512,8 +558,10 @@ def site_plan():
     fig.savefig(os.path.join(HERE, "site-plan.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
 
+    proj = max(g["top_landing"][3], g["corner"][3]) / 12.0
     return {"addition_rear_extent_ft": ay + ad,
-            "rear_yard_remaining_ft": ld - (ay + ad)}
+            "rear_yard_remaining_ft": ld - (ay + ad),
+            "stair_yard_projection_ft": proj}
 
 
 # ----------------------------------------------------------------------------
@@ -537,13 +585,14 @@ def south_elevation():
     pitch = lv["roof_pitch_in_12"]
     ridge = plate2 + 10 + (W2 / 2) * pitch / 12.0
 
-    treads = math.ceil(st["total_rise"] / st["riser_max"]) - 1
-    risers = treads + 1
-    riser_h = st["total_rise"] / risers
+    g = stair_geom()
+    riser_h = g["riser"]
+    run = g["tread"]
 
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.set_title("South elevation (from backyard, looking north) — east on RIGHT\n"
-                 "exterior stair rises west → east to second-floor entry", fontsize=12)
+                 "L-stair: upper flight along south wall; lower flight turns north at SW corner",
+                 fontsize=12)
     ax.set_aspect("equal")
     ax.axis("off")
 
@@ -553,7 +602,7 @@ def south_elevation():
         return -x
 
     # ground line
-    ax.plot([xd(W1 + 140), xd(-90)], [0, 0], color="#553311", lw=2)
+    ax.plot([xd(W1 + 80), xd(-90)], [0, 0], color="#553311", lw=2)
     ax.text(xd(-88), -14, "grade", fontsize=8, color="#553311")
 
     # first floor mass
@@ -589,35 +638,51 @@ def south_elevation():
     ax.text(xd(W1 / 2 - off / 2), ff + 20, "bedroom egress", ha="center",
             fontsize=7, color="#4a6172")
 
-    # stair profile: bottom at west (left), rising to east (right)
-    run = st["tread_run"]
-    x_top = off + st["top_landing"]         # plan-x where stair leaves the landing
-    pts_x, pts_y = [], []
-    for i in range(treads + 1):
-        x_plan = x_top + (treads - i) * run
-        pts_x.append(xd(x_plan))
-        pts_y.append((i) * riser_h)
-    # draw steps
-    for i in range(treads):
-        x0, y0 = pts_x[i], pts_y[i]
-        ax.plot([x0, x0], [y0, y0 + riser_h], color="#333333", lw=1.2)
-        ax.plot([x0, x0 + run], [y0 + riser_h, y0 + riser_h], color="#333333", lw=1.2)
+    # Upper flight in profile (visible on the south face), rising east to the door
+    x_top = off + st["top_landing"]
+    up_treads = g["up_r"] - 1
+    for i in range(up_treads):
+        # i=0 is the bottom of the upper flight (at corner landing height)
+        x_plan = x_top + (up_treads - 1 - i) * run
+        y0 = g["corner_height"] + i * riser_h
+        ax.plot([xd(x_plan + run), xd(x_plan + run)], [y0, y0 + riser_h],
+                color="#333333", lw=1.2)
+        ax.plot([xd(x_plan + run), xd(x_plan)], [y0 + riser_h, y0 + riser_h],
+                color="#333333", lw=1.2)
     # top landing
     ax.plot([xd(x_top), xd(off)], [st["total_rise"], st["total_rise"]],
             color="#333333", lw=2.0)
-    # guard
-    ax.plot([pts_x[0], pts_x[-1]], [42, st["total_rise"] + 42], color="#777777", lw=1)
     ax.plot([xd(x_top), xd(off)], [st["total_rise"] + 42, st["total_rise"] + 42],
             color="#777777", lw=1)
-    ax.text(pts_x[len(pts_x) // 2], st["total_rise"] / 2 - 30,
-            f"{risers} risers @ {riser_h:.2f}\" | {treads} treads @ {run}\"\n"
-            f"guard 42\", handrail 34–38\"", fontsize=8, ha="center")
+    # upper-flight guard
+    ax.plot([xd(x_top + up_treads * run), xd(x_top)],
+            [g["corner_height"] + 42, st["total_rise"] + 42], color="#777777", lw=1)
+
+    # Corner landing (end view at west) + lower flight going away from the viewer
+    cx = g["corner"][0]
+    ax.add_patch(Rectangle((xd(cx + g["corner"][2]), g["corner_height"] - 4),
+                           g["corner"][2], 8, facecolor="#bbbbbb",
+                           edgecolor="#333333", lw=1.0, zorder=3))
+    ax.plot([xd(cx + g["corner"][2]), xd(cx + g["corner"][2])],
+            [g["corner_height"], g["corner_height"] + 42], color="#777777", lw=1)
+    # dashed outline of the lower flight descending north (into the page)
+    ax.add_patch(Rectangle((xd(cx + g["width"] + 8), 0), g["width"] + 8,
+                           g["corner_height"], fill=False, edgecolor="#666666",
+                           lw=1.0, linestyle="--", zorder=2))
+    ax.text(xd(cx + g["width"] / 2), g["corner_height"] / 2,
+            f"lower flight\n{g['lo_r']} risers\n(turns north)",
+            ha="center", va="center", fontsize=7, color="#555555")
+
+    ax.text(xd(off + W2 / 2), -22,
+            f"L-stair: {g['risers']} risers @ {riser_h:.2f}\" | upper {g['up_r']} south + "
+            f"lower {g['lo_r']} west | guard 42\", handrail 34–38\"",
+            fontsize=8, ha="center")
 
     ax.text(xd(0) + 30, 10, "E →", fontsize=10, weight="bold")
-    ax.text(pts_x[0] - 55, 10, "← W", fontsize=10, weight="bold")
+    ax.text(xd(W1) - 30, 10, "← W", fontsize=10, weight="bold")
 
-    ax.set_xlim(pts_x[0] - 90, xd(0) + 80)
-    ax.set_ylim(-30, ridge + 40)
+    ax.set_xlim(xd(W1 + 90), xd(0) + 80)
+    ax.set_ylim(-40, ridge + 40)
     fig.savefig(os.path.join(HERE, "south-elevation.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
 
@@ -636,8 +701,9 @@ if __name__ == "__main__":
     print(f"Second-floor plate:    {a2['plate_sqft']:.0f} sq ft "
           f"(interior {a2['interior_sqft']:.0f})")
     print(f"New gross floor area:  {gross:.0f} sq ft")
-    print(f"Stair: {a2['treads'] + 1} risers @ {a2['riser_in']:.2f}\", "
-          f"run {a2['stair_run_in'] / 12:.1f} ft")
+    print(f"Stair (L): {a2['treads'] + 1} risers @ {a2['riser_in']:.2f}\" — "
+          f"upper {a2['up_r']} south + lower {a2['lo_r']} west; "
+          f"yard projection {a2['yard_projection_in'] / 12:.1f} ft")
     print(f"Addition rear extent:  {a3['addition_rear_extent_ft']:.1f} ft from front PL; "
           f"rear yard remaining {a3['rear_yard_remaining_ft']:.1f} ft (schematic)")
     print(f"Second finish floor:   {a4['second_ff_in'] / 12:.2f} ft; "

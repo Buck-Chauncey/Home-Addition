@@ -43,7 +43,10 @@
     "tread_run": 10.5,
     "width": 36,
     "top_landing": 48,
-    "note": "Straight run along south wall, bottom at west, rising to the east; top landing at the second-floor entry door (SE corner)."
+    "shape": "L",
+    "upper_flight_risers": 8,
+    "corner_landing": 42,
+    "note": "L-stair wrapping the SW corner: top landing at the second-floor entry (SE corner of the plate), upper flight descending west along the south wall, 42-inch corner landing, lower flight descending north along the west wall (partly under the 2'-6\" cantilever), bottom pad ~6 ft clear of the corridor slider."
   },
   "levels": {
     "first_finish_floor_above_grade": 18,

@@ -1,4 +1,4 @@
-# Two-story rear addition — formalized mockup (v3)
+# Two-story rear addition — formalized mockup (v4)
 
 5916 Panama Ave, Richmond, CA 94804 · APN 510-132-010-8 · Zoning RL2
 
@@ -14,8 +14,10 @@ Owner decisions incorporated:
    east wall plane) — no variance needed.
 2. Second floor **narrowed** to the **9′-0″ upper-story side setback**
    (4′-0″ offset from the addition's ground-floor east face).
-3. Exterior stair along the **south (backyard) wall**, bottom at the west,
-   rising to the east; entry door at the second floor's southeast corner.
+3. Exterior stair is an **L wrapping the SW corner**: top landing at the SE
+   entry door, upper flight along the south wall, corner landing, lower flight
+   descending north along the west wall (partly under the 2′-6″ cantilever) —
+   so nothing projects more than ~4′ into the open yard.
 4. **The corridor is a bump-out of the dining room** — the dining room's rear
    wall is opened ≈ 7′-10″ (new header) and the corridor flows around into the
    addition's entry. **No separate hall**: the entry is one continuous open
@@ -79,15 +81,29 @@ Main block 14′-0″ × 21′-6″ exterior; bump-out beyond the main block 6�
 Plate 12′-6″ × 21′-6″, east face 4′-0″ west of the ground-floor east face; the
 west wall cantilevers 2′-6″ beyond the narrowed first-floor west wall.
 
-### Exterior stair
+### Exterior stair (L around the SW corner)
+
+A straight run needed 19′-9″ of length against a 14′ south wall, which would
+have pushed ~9′ into the open yard. The L-stair keeps the same rise and code
+geometry but hugs the building:
 
 - 19 risers @ 7.37″ (max 7¾″ ✓), 18 treads @ 10.5″ (min 10″ ✓), 36″ wide
-- Straight run 15′-9″ along the south wall + 4′×4′ top landing = 19′-9″ total;
-  the bottom ~9′ extends past the addition's southwest corner into the yard
-  (an L-return at the bottom is the fallback if that projection is unwanted)
+- Top landing 4′×4′ at the second-floor entry door (SE corner of the plate)
+- Upper flight: 8 risers / 7 treads (~6′-2″) descending west along the south wall
+- Corner landing 42″×42″ wrapping the SW corner
+- Lower flight: 11 risers / 10 treads (~8′-9″) descending north along the west
+  wall, ending on a bottom pad ~6′ clear of the corridor's double slider
+- Lower flight sits partly under the second floor's 2′-6″ cantilever (rain cover)
+- **Yard projection ≈ 4′** (the landings), not ~9′ — the deep yard south of
+  the addition stays clear
 - Total rise 11′-8″ (grade → second finish floor, assuming first floor framed
   ~18″ above grade to match the existing floor level — **field-verify**)
 - Guards 42″, handrail 34″–38″, lighting at the top landing
+
+Alternatives considered and not drawn: a spiral stair (~5′ circle, CRC-ok for
+this size of space, but poor for furniture); 10″ treads (saves only 9″);
+dropping the first floor to 8′ ceilings (saves ~2′-5″ of run but reverses the
+9′ ceiling decision).
 
 ## Zoning compliance (RL2, RMC 15.04.201.030)
 
@@ -101,9 +117,9 @@ west wall cantilevers 2′-6″ beyond the narrowed first-floor west wall.
 | Residential floor area | ≤ 2,500 sq ft | 842 existing + 595 new = 1,437 | ✓ |
 
 With the real 30.5′ house depth the rear yard has generous margin: the
-addition reaches ≈ 72′ from the front line and the stair ≈ 75.5′, vs the 20′
-rear setback line at 80′. Open items: (a) confirm the front setback (drives
-everything above); (b) design review / compatibility standards
+addition reaches ≈ 72′ from the front line and the L-stair's south face ≈ 76′,
+vs the 20′ rear setback line at 80′. Open items: (a) confirm the front setback
+(drives everything above); (b) design review / compatibility standards
 (RMC 15.04.201.040).
 
 ## Building-code checklist (2022/2025 CRC as adopted by Richmond)
@@ -153,7 +169,7 @@ covered within the framing range below.)
 | Roofing + gutters + tie-in | $10,000 | $16,000 |
 | Windows + exterior doors (incl. 6′ double slider) | $13,000 | $22,000 |
 | Siding, exterior trim, paint | $16,000 | $26,000 |
-| Exterior stair, landing, guardrails | $10,000 | $16,000 |
+| Exterior stair, landings, guardrails (L-stair; corner landing +$1–3k vs straight) | $11,000 | $18,000 |
 | Plumbing rough + fixtures (2 baths, stacked) | $28,000 | $45,000 |
 | Electrical (panel work, rough, fixtures) | $14,000 | $22,000 |
 | HVAC (2-zone mini-split) | $9,000 | $14,000 |
