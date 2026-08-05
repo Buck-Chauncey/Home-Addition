@@ -1,0 +1,56 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "apn": "510-132-010",
+        "apn_check": "8",
+        "address": "5916 Panama Ave, Richmond, CA 94804",
+        "full_address_display": "5916  PANAMA AVE  - RICHMOND",
+        "lot_area_sqft": 5000,
+        "building_sqft_tla": "842",
+        "year_house_built": "1942",
+        "use_code": 11,
+        "use_description": "Single Family, 1 residence on 1 site, with or without",
+        "land_value": 525000,
+        "improvement_value": 215000,
+        "deed_number": "21226208",
+        "deed_date": "08/13/2021",
+        "assessor_map_pdf": "https://gis.cccounty.us/HTML5/assessorPDF/510p13x0.pdf",
+        "source": "Contra Costa County CCMAP Assessment Parcels"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -122.30841504047537,
+              37.90668941063862
+            ],
+            [
+              -122.30837556098757,
+              37.90663137690923
+            ],
+            [
+              -122.3085262756675,
+              37.906566848983445
+            ],
+            [
+              -122.30869213631169,
+              37.90680987657639
+            ],
+            [
+              -122.30854099284663,
+              37.90687453487628
+            ],
+            [
+              -122.30841504047537,
+              37.90668941063862
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
