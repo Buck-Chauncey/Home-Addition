@@ -831,7 +831,9 @@ def south_elevation():
     rx0, rx1 = xd(off + W2) - 12, xd(off) + 12
     ax.plot([rx0, (rx0 + rx1) / 2, rx1], [plate2 + 8, ridge, plate2 + 8],
             color="#555555", lw=1.4)
-    ax.plot([xd(off), xd(0) + 8], [sf + 6, sf - 10], color="#555555", lw=1.2)
+    # shed roof over exposed first-floor strip only when 2nd floor is inset
+    if off > 1:
+        ax.plot([xd(off), xd(0) + 8], [sf + 6, sf - 10], color="#555555", lw=1.2)
 
     for y, lbl in [(ff, f'1st FF  +{ft_in(ff)}'), (sf, f'2nd FF  +{ft_in(sf)}'),
                    (plate2, f'2nd plate  +{ft_in(plate2)}')]:
