@@ -1,0 +1,182 @@
+{
+  "objectIdFieldName": "FID",
+  "uniqueIdField": {
+    "name": "FID",
+    "isSystemMaintained": true
+  },
+  "globalIdFieldName": "",
+  "geometryProperties": {
+    "shapeAreaFieldName": "Shape__Area",
+    "shapeLengthFieldName": "Shape__Length",
+    "units": "esriFeet"
+  },
+  "geometryType": "esriGeometryPolygon",
+  "spatialReference": {
+    "wkid": 4326,
+    "latestWkid": 4326
+  },
+  "fields": [
+    {
+      "name": "FID",
+      "type": "esriFieldTypeOID",
+      "alias": "FID",
+      "sqlType": "sqlTypeOther",
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "APN",
+      "type": "esriFieldTypeString",
+      "alias": "APN",
+      "sqlType": "sqlTypeOther",
+      "length": 15,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "APN_CHECK",
+      "type": "esriFieldTypeString",
+      "alias": "APN_CHECK",
+      "sqlType": "sqlTypeOther",
+      "length": 1,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_STR_NM",
+      "type": "esriFieldTypeString",
+      "alias": "S_STR_NM",
+      "sqlType": "sqlTypeOther",
+      "length": 30,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_STR_SUF",
+      "type": "esriFieldTypeString",
+      "alias": "S_STR_SUF",
+      "sqlType": "sqlTypeOther",
+      "length": 4,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_STR_NBR",
+      "type": "esriFieldTypeString",
+      "alias": "S_STR_NBR",
+      "sqlType": "sqlTypeOther",
+      "length": 5,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_FRAC",
+      "type": "esriFieldTypeString",
+      "alias": "S_FRAC",
+      "sqlType": "sqlTypeOther",
+      "length": 4,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_APT_NBR",
+      "type": "esriFieldTypeString",
+      "alias": "S_APT_NBR",
+      "sqlType": "sqlTypeOther",
+      "length": 9,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_CTY_ABBR",
+      "type": "esriFieldTypeString",
+      "alias": "S_CTY_ABBR",
+      "sqlType": "sqlTypeOther",
+      "length": 5,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_ZIP",
+      "type": "esriFieldTypeInteger",
+      "alias": "S_ZIP",
+      "sqlType": "sqlTypeOther",
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "S_ZIP_EXT",
+      "type": "esriFieldTypeString",
+      "alias": "S_ZIP_EXT",
+      "sqlType": "sqlTypeOther",
+      "length": 4,
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "sqlType": "sqlTypeDouble",
+      "domain": null,
+      "defaultValue": null
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "sqlType": "sqlTypeDouble",
+      "domain": null,
+      "defaultValue": null
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "FID": 354646,
+        "APN": "510132010",
+        "APN_CHECK": "8",
+        "S_STR_NM": "PANAMA",
+        "S_STR_SUF": "AVE",
+        "S_STR_NBR": "5916",
+        "S_FRAC": " ",
+        "S_APT_NBR": " ",
+        "S_CTY_ABBR": "RCHMD",
+        "S_ZIP": 94804,
+        "S_ZIP_EXT": "5524",
+        "Shape__Area": 4978.5283203125,
+        "Shape__Length": 300.1705647306916
+      },
+      "geometry": {
+        "rings": [
+          [
+            [
+              -122.308415040843,
+              37.9066894105625
+            ],
+            [
+              -122.308375560607,
+              37.9066313766951
+            ],
+            [
+              -122.308526276051,
+              37.9065668491488
+            ],
+            [
+              -122.308692136213,
+              37.9068098768924
+            ],
+            [
+              -122.308540992522,
+              37.9068745346602
+            ],
+            [
+              -122.308415040843,
+              37.9066894105625
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

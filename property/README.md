@@ -32,6 +32,13 @@ Your parcel is **APN 510-132-010** on this page (Block 132, circled parcel **10*
 - [`assessor/parcel-510-132-010.geojson`](assessor/parcel-510-132-010.geojson) — parcel boundary + key attributes (WGS84)
 - [`assessor/parcel-510-132-010.json`](assessor/parcel-510-132-010.json) — full CCMAP feature response
 
+## Buildable envelope (zoning setbacks)
+
+Where a primary-dwelling addition can go under **RL2** setbacks:
+
+- [`zoning/buildable-envelope-map.png`](zoning/buildable-envelope-map.png) — annotated site plan
+- [`zoning/README.md`](zoning/README.md) — standards, assumptions, and next steps with the City
+
 ## Related county tools
 
 - CCMAP property viewer: https://ccmap.cccounty.us

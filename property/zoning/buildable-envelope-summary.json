@@ -1,0 +1,56 @@
+{
+  "address": "5916 Panama Ave, Richmond, CA 94804",
+  "apn": "510-132-010-8",
+  "zoning": "RL2 \u2014 Single Family Low Density Residential",
+  "general_plan": "LR \u2014 Low Density Residential",
+  "overlays": {
+    "creek_protection": false,
+    "shoreline": false,
+    "historic_district": false
+  },
+  "lot": {
+    "assessed_area_sqft": 5000,
+    "gis_area_sqft": 4983.3,
+    "legal_description": "RICHMOND ANNEX LOTS 16 & 17 BLK 68",
+    "assessor_typical_dimensions": "50 ft width x 100 ft depth (Lots 16 & 17 combined)",
+    "frontage": "Panama Ave (west side of parcel)"
+  },
+  "setbacks_ft_rl2_rmc_15_04_201_030": {
+    "front": 20,
+    "interior_side_ground": 5,
+    "interior_side_above_ground": 9,
+    "rear": 20,
+    "rear_optional_reduced": "10 ft if front+rear combined >= 40 ft (RMC 15.04.201.030.F)",
+    "notes": [
+      "Front setback may be reduced to the average of abutting improved lots on the block face, or 20 ft, whichever is less (RMC 15.04.201.030.B).",
+      "Lot is not a corner lot; street-side setback does not apply."
+    ]
+  },
+  "other_limits": {
+    "max_height_main_ft": 30,
+    "max_lot_coverage_pct": 50,
+    "max_lot_coverage_sqft": 2500,
+    "max_residential_floor_area_sqft": 2500,
+    "max_far_calc": "2,125 + 0.3 \u00d7 (5,000 \u2212 3,750) = 2,500 sq ft (Table 15.04.201.030-G)",
+    "existing_tla_sqft": 842,
+    "remaining_floor_area_budget_sqft": 1658
+  },
+  "buildable_envelope_areas_sqft": {
+    "ground_floor_standard": 2396.7,
+    "ground_floor_reduced_rear": 2791.2,
+    "second_story": 1911.2,
+    "ideal_50x100_ground_floor_standard": 2400,
+    "ideal_50x100_ground_floor_reduced_rear": 2800,
+    "ideal_50x100_second_story": 1920
+  },
+  "existing_footprints_sqft_approx": {
+    "house": 1360.0,
+    "garage": 277.1
+  },
+  "sources": [
+    "City of Richmond Parcel Zoning (COR_ZoningCloud) \u2014 PROP_ZONE=RL2",
+    "RMC 15.04.201.030 Development Standards \u2014 RH, RL1 and RL2",
+    "Contra Costa CCMAP Assessment Parcels"
+  ],
+  "disclaimer": "Planning aid only \u2014 not a survey, not city approval. GIS boundaries are approximate. Existing building footprint from OSM may be imprecise. Front-setback averaging and exact property corners require field/survey confirmation."
+}
