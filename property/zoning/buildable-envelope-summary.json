@@ -13,7 +13,14 @@
     "gis_area_sqft": 4983.3,
     "legal_description": "RICHMOND ANNEX LOTS 16 & 17 BLK 68",
     "assessor_typical_dimensions": "50 ft width x 100 ft depth (Lots 16 & 17 combined)",
-    "frontage": "Panama Ave (west side of parcel)"
+    "frontage": "Panama Ave (north side of parcel; house is south of Panama)",
+    "orientation": {
+      "panama_ave": "east-west street on the north side of the lot",
+      "front": "north",
+      "rear_yard": "south",
+      "left_from_street": "east",
+      "right_from_street": "west"
+    }
   },
   "setbacks_ft_rl2_rmc_15_04_201_030": {
     "front": 20,
@@ -54,10 +61,11 @@
   ],
   "disclaimer": "Planning aid only \u2014 not a survey, not city approval. GIS boundaries are approximate. Existing building footprint from OSM may be imprecise. Front-setback averaging and exact property corners require field/survey confirmation.",
   "measured_setbacks": {
-    "left_side_wall_inches": 52.5,
-    "left_side_wall_feet": 4.375,
-    "left_side_runs_parallel_to_boundary": true,
+    "east_side_wall_inches": 52.5,
+    "east_side_wall_feet": 4.375,
+    "east_side_runs_parallel_to_boundary": true,
+    "diagram_label": "left side when Panama is drawn at bottom of site plan",
     "source": "Owner field measurement",
-    "notes": "Left side in site-plan diagrams (side yard toward addition). Supersedes OSM footprint side-setback estimate of ~3.2 ft."
+    "notes": "Supersedes OSM footprint side-setback estimate of ~3.2 ft. Short of RL2 5 ft GF side yard by 7.5 inches; short of 9 ft upper-story side yard by ~4.6 ft."
   }
 }

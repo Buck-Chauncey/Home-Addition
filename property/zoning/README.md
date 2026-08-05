@@ -53,11 +53,20 @@ Standards from **RMC 15.04.201.030** (RH / RL1 / RL2 development standards):
 5. **Lot coverage budget:** total building footprints (house + garage + addition) ≤ **2,500 sq ft**.
 6. **Building code (CRC/CBC)** still applies inside the envelope (egress, light/air, fire separation at walls/openings near property lines, structural, energy, etc.). Zoning setbacks are usually the first filter for *where*; the code governs *how*.
 
+## Site orientation
+
+| Direction | What it is |
+| --- | --- |
+| **North** | Panama Ave (front) — street runs east–west |
+| **South** | Backyard / rear yard |
+| **East** | Left side when facing the house from Panama |
+| **West** | Right side when facing the house from Panama |
+
 ## Measured setbacks (owner)
 
 | Item | Value |
 | --- | --- |
-| Left side wall to parcel line | **52.5″ (4.375′)** — runs parallel |
+| East side wall to parcel line | **52.5″ (4.375′)** — runs parallel |
 | Source | Owner field measurement (supersedes OSM ~3.2′ estimate) |
 
 See [`left-rear-addition-setback-check.md`](left-rear-addition-setback-check.md) for the flush vs. pull-in addition check.
