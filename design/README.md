@@ -52,7 +52,8 @@ Owner decisions incorporated:
 | `first-floor-plan.png` | Bedroom, full bath, walk-in closet, entry + dining bump-out, existing rooms shown for context |
 | `second-floor-plan.png` | Office, shower bath, entry landing + stair |
 | `site-plan.png` | Lot plan with real house footprint, garage, porch, shed, setback lines |
-| `south-elevation.png` | Massing, floor levels, stair profile |
+| `south-elevation.png` | Massing, floor levels, upper stair flight in profile |
+| `west-elevation.png` | West face: lower stair flight in profile, cantilever, corridor bump-out |
 
 Plan orientation matches the owner's sketches and the marketing plans:
 bottom = north (Panama side), left = east (property line), top = south (backyard).

@@ -689,11 +689,158 @@ def south_elevation():
     return {"second_ff_in": sf, "ridge_ft": ridge / 12.0}
 
 
+# ----------------------------------------------------------------------------
+# West elevation (viewed from the west side yard, looking east; south on RIGHT)
+# ----------------------------------------------------------------------------
+
+def west_elevation():
+    f = P["first_floor"]
+    h = P["existing_house"]
+    sec = P["second_floor"]
+    st = P["stair"]
+    lv = P["levels"]
+
+    ff = lv["first_finish_floor_above_grade"]
+    c1 = f["ceiling_height_ft"] * 12
+    fl = lv["floor_assembly_depth"]
+    c2 = sec["ceiling_height_ft"] * 12
+    sf = ff + c1 + fl
+    plate2 = sf + c2
+    W1 = f["main_block_ext_width"]
+    W2 = sec["ext_width"]
+    D = f["main_block_ext_depth"]
+    off = sec["east_face_offset_from_ground_east_face"]
+    pitch = lv["roof_pitch_in_12"]
+    # gable end: ridge runs N-S, so west elevation shows the gable triangle
+    ridge = plate2 + 10 + (W2 / 2) * pitch / 12.0
+    eaves = plate2 + 8
+
+    cor_d = f["corridor_interior_ns"] + EXT
+    din_w = h["dining_kitchen_wall_local_x"] - 4.5
+    cor_x1 = din_w + EXT
+    slider = f["slider_width"]
+
+    g = stair_geom()
+    riser_h = g["riser"]
+    run = g["tread"]
+
+    fig, ax = plt.subplots(figsize=(13, 8))
+    ax.set_title("West elevation (from side yard, looking east) — south on RIGHT\n"
+                 "L-stair lower flight in profile along west wall; 2'-6\" cantilever; "
+                 "corridor bump-out with double slider", fontsize=12)
+    ax.set_aspect("equal")
+    ax.axis("off")
+
+    # Drawing x = plan y (north→south left→right). Looking east: left=N, right=S.
+    house_d = 110
+
+    # ground line
+    ax.plot([-house_d - 20, D + g["corner"][3] + 40], [0, 0], color="#553311", lw=2)
+    ax.text(-house_d - 18, -14, "grade", fontsize=8, color="#553311")
+
+    # existing house ghost (one story, north of y=0)
+    ax.add_patch(Rectangle((-house_d, 0), house_d, ff + 96, facecolor="#ddd5c8",
+                           edgecolor="#999999", lw=1.0, linestyle="--", zorder=0))
+    ax.text(-house_d / 2, (ff + 96) / 2, "EXISTING\nHOUSE", ha="center", va="center",
+            fontsize=8, color="#888888")
+
+    # corridor bump-out west face (furthest west — one story, north strip)
+    ax.add_patch(Rectangle((0, 0), cor_d, ff + c1 + 6, facecolor="#e8dcc8",
+                           edgecolor="#555555", lw=1.2, zorder=2))
+    # double slider is in the corridor's SOUTH face — show as opening at the
+    # south edge of the bump-out (right edge of this mass)
+    ax.add_patch(Rectangle((cor_d - 4, ff + 6), 4, 80, facecolor="#dfeefb",
+                           edgecolor="#1d4ed8", lw=1.2, zorder=3))
+    ax.text(cor_d / 2, ff + c1 / 2, f"CORRIDOR\nbump-out\n({ft_in(slider)} slider\non south face)",
+            ha="center", va="center", fontsize=7, color="#333333", zorder=4)
+
+    # first-floor main-block west wall (recessed under the cantilever)
+    # runs from south of corridor to south wall
+    ax.add_patch(Rectangle((cor_d, 0), D - cor_d, ff + c1 + fl, facecolor="#d9ceb8",
+                           edgecolor="#555555", lw=1.0, linestyle="--", zorder=1))
+    ax.text((cor_d + D) / 2, ff + 20, "1st fl. west wall\n(2'-6\" under cantilever)",
+            ha="center", va="bottom", fontsize=7, color="#666666")
+
+    # bedroom west window (on first floor west wall)
+    ax.add_patch(Rectangle((D / 2 + 20, ff + 30), 36, 48, facecolor="#dfeefb",
+                           edgecolor="#4a6172", lw=1, zorder=2))
+
+    # second-floor west face (cantilevered forward toward viewer)
+    ax.add_patch(Rectangle((0, sf - fl), D, fl + c2 + 8, facecolor="#dfd2ba",
+                           edgecolor="#555555", lw=1.2, zorder=3))
+    # office west window
+    ax.add_patch(Rectangle((D / 2 + 10, sf + 36), 48, 48, facecolor="#dfeefb",
+                           edgecolor="#4a6172", lw=1, zorder=4))
+    # bath north window is on north wall — not on west face
+
+    # gable end of roof (ridge runs N-S, so west elev shows the rake)
+    # simple shed/gable: peak at mid-depth of second floor
+    mid = D / 2
+    ax.plot([0 - 8, mid, D + 8], [eaves, ridge, eaves], color="#555555", lw=1.4, zorder=4)
+    ax.plot([0 - 8, D + 8], [eaves, eaves], color="#555555", lw=1.0, zorder=4)
+
+    # floor lines + labels
+    for y, lbl in [(ff, f'1st FF  +{ft_in(ff)}'), (sf, f'2nd FF  +{ft_in(sf)}'),
+                   (plate2, f'2nd plate  +{ft_in(plate2)}')]:
+        ax.plot([-20, D + 20], [y, y], color="#888888", lw=0.7, linestyle=":")
+        ax.text(-24, y, lbl, ha="right", va="center", fontsize=8, color="#555555")
+    ax.text(mid, ridge + 8, f"ridge ≈ +{ft_in(ridge)}  (max 30')",
+            ha="center", fontsize=8, color="#555555")
+    ax.text(D + 10, sf - fl / 2, "2'-6\" cantilever\n(2nd fl. west face\ntoward viewer)",
+            fontsize=7, color="#1d4ed8", va="center")
+
+    # L-stair lower flight in profile (rising south / to the right)
+    lo_treads = g["lo_r"] - 1
+    # lower flight plan-y: from D - lo_len (north/bottom) to D (south/top at corner)
+    y_bot = g["lower"][1]          # north end of flight
+    for i in range(lo_treads):
+        # i=0 at bottom (grade side); steps rise toward south
+        y_plan = y_bot + i * run
+        z0 = i * riser_h
+        ax.plot([y_plan, y_plan], [z0, z0 + riser_h], color="#333333", lw=1.2, zorder=5)
+        ax.plot([y_plan, y_plan + run], [z0 + riser_h, z0 + riser_h],
+                color="#333333", lw=1.2, zorder=5)
+    # bottom pad
+    pad = g["pad"]
+    ax.add_patch(Rectangle((pad[1], 0), pad[3], 4, facecolor="#bbbbbb",
+                           edgecolor="#333333", lw=1.0, zorder=5))
+    # corner landing at south end
+    ax.add_patch(Rectangle((D, g["corner_height"] - 4), g["corner"][3], 8,
+                           facecolor="#bbbbbb", edgecolor="#333333", lw=1.0, zorder=5))
+    # guard along lower flight
+    ax.plot([y_bot, D], [42, g["corner_height"] + 42], color="#777777", lw=1, zorder=5)
+    ax.plot([D, D + g["corner"][3]], [g["corner_height"] + 42, g["corner_height"] + 42],
+            color="#777777", lw=1, zorder=5)
+    # upper flight goes east (into the page) — dashed end view above corner
+    ax.add_patch(Rectangle((D + 4, g["corner_height"]), g["corner"][3] - 8,
+                           st["total_rise"] - g["corner_height"], fill=False,
+                           edgecolor="#666666", lw=1.0, linestyle="--", zorder=4))
+    ax.text(D + g["corner"][3] / 2, (g["corner_height"] + st["total_rise"]) / 2,
+            f"upper flight\n{g['up_r']} risers\n(turns east)",
+            ha="center", va="center", fontsize=7, color="#555555", zorder=5)
+
+    ax.text(D / 2, -28,
+            f"L-stair lower flight: {g['lo_r']} risers @ {riser_h:.2f}\" along west wall | "
+            f"corner landing → upper {g['up_r']} along south | guard 42\", handrail 34–38\"",
+            fontsize=8, ha="center")
+
+    ax.text(-house_d / 2, -28, "← N (existing house)", fontsize=10, weight="bold")
+    ax.text(D + g["corner"][3] / 2, -28, "S (backyard) →", fontsize=10, weight="bold")
+
+    ax.set_xlim(-house_d - 80, D + g["corner"][3] + 50)
+    ax.set_ylim(-50, ridge + 40)
+    fig.savefig(os.path.join(HERE, "west-elevation.png"), dpi=140, bbox_inches="tight")
+    plt.close(fig)
+
+    return {"cantilever_in": off + W2 - W1, "corridor_depth_in": cor_d}
+
+
 if __name__ == "__main__":
     a1 = first_floor()
     a2 = second_floor()
     a3 = site_plan()
     a4 = south_elevation()
+    a5 = west_elevation()
 
     gross = a1["footprint_sqft"] + a2["plate_sqft"]
     print(f"First-floor footprint: {a1['footprint_sqft']:.0f} sq ft "
@@ -708,6 +855,8 @@ if __name__ == "__main__":
           f"rear yard remaining {a3['rear_yard_remaining_ft']:.1f} ft (schematic)")
     print(f"Second finish floor:   {a4['second_ff_in'] / 12:.2f} ft; "
           f"ridge ≈ {a4['ridge_ft']:.1f} ft (limit 30 ft)")
+    print(f"West elev: cantilever {a5['cantilever_in'] / 12:.1f} ft; "
+          f"corridor bump-out depth {a5['corridor_depth_in'] / 12:.1f} ft")
     print(f"FAR check: 842 existing + {gross:.0f} new = {842 + gross:.0f} "
           f"of 2,500 sq ft allowed")
     print(f"Coverage check: 1,360 house + 277 garage + {a1['footprint_sqft']:.0f} addition "
