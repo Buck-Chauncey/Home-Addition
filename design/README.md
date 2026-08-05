@@ -10,7 +10,8 @@
 | [`L stair/`](L%20stair/) | L | Full two-bath | 9′ inset | ≈ $299k–$484k |
 | [`spiral_stairs/`](spiral_stairs/) | Spiral | Full + furniture window | 9′ inset | ≈ $292k–$476k |
 | [`lean/`](lean/) | Spiral | Smaller; upstairs toilet only | 9′ inset | ≈ $210k–$355k |
-| [`ADU/`](ADU/) | Spiral | **Studio ADU upstairs (kitchenette + full bath)** | **5′ flush** | **≈ $240k–$400k** |
+| [`ADU/`](ADU/) | Spiral | Studio ADU upstairs (kitchenette + full bath) | **5′ flush** | ≈ $240k–$400k |
+| [`ADU_balcony/`](ADU_balcony/) | Spiral | **ADU + west slider onto balcony** | **5′ flush** | **≈ $250k–$420k** |
 
 ## Cost comparison
 
@@ -19,6 +20,7 @@ See **[`cost-estimates.md`](cost-estimates.md)**.
 ## Generator
 
 ```bash
+python3 generate_plans.py --params ADU_balcony/params.json --out ADU_balcony
 python3 generate_plans.py --params ADU/params.json --out ADU
 python3 generate_plans.py --params lean/params.json --out lean
 python3 generate_plans.py --params "L stair/params.json" --out "L stair"

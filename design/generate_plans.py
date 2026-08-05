@@ -605,7 +605,45 @@ def second_floor():
     else:
         window(ax, x0 + EXT + bathw + INT + 10, 0, 30, horizontal=True)
 
-    if s.get("furniture_window"):
+    bal_xmax = x0 + W
+    if s.get("west_slider"):
+        sw = s.get("west_slider_width", 72)
+        sh = s.get("west_slider_height", 80)
+        if has_kit:
+            wy = (EXT + bathd + INT) + 16
+        else:
+            wy = west_win_y0
+        span = west_win_span if west_win_span > 40 else sw
+        sw_draw = min(sw, span)
+        wy = wy + max(0, (span - sw_draw) / 2)
+        door(ax, x0 + W - EXT, wy, sw_draw, horizontal=False)
+        ax.plot([x0 + W - EXT, x0 + W], [wy + sw_draw / 2, wy + sw_draw / 2],
+                color="#4a6172", lw=1.2, zorder=5)
+        ax.plot([x0 + W - EXT / 2, x0 + W - EXT / 2], [wy, wy + sw_draw],
+                color="#4a6172", lw=0.8, zorder=5)
+        ax.text(x0 + W + 8, wy + sw_draw / 2,
+                f"SLIDING DOORS\n{ft_in(sw)} × {ft_in(sh)}\n→ west balcony",
+                ha="left", va="center", fontsize=7.5, color="#1d4ed8",
+                bbox=dict(boxstyle="round", fc="#eef5ff", ec="#1d4ed8"))
+        if s.get("balcony"):
+            bd = s.get("balcony_depth", 48)
+            bw = s.get("balcony_width", 120)
+            by = wy + sw_draw / 2 - bw / 2
+            by = max(EXT, min(by, D - EXT - bw))
+            ax.add_patch(Rectangle((x0 + W, by), bd, bw, facecolor="#c8b89a",
+                                   edgecolor="#6b5a3e", lw=1.2, zorder=2))
+            # guard on three open sides
+            ax.plot([x0 + W + bd, x0 + W + bd], [by, by + bw],
+                    color="#555555", lw=1.4, zorder=3)
+            ax.plot([x0 + W, x0 + W + bd], [by, by], color="#555555", lw=1.4, zorder=3)
+            ax.plot([x0 + W, x0 + W + bd], [by + bw, by + bw],
+                    color="#555555", lw=1.4, zorder=3)
+            ax.text(x0 + W + bd / 2, by + bw / 2,
+                    f"BALCONY\n{ft_in(bw)} × {ft_in(bd)}\nguard 42\"",
+                    ha="center", va="center", fontsize=7.5, color="#3d2e1a", zorder=4)
+            dim_h(ax, x0 + W, x0 + W + bd, by - 10, label=ft_in(bd))
+            bal_xmax = x0 + W + bd + 20
+    elif s.get("furniture_window"):
         fw = s.get("furniture_window_width", 72)
         wy = west_win_y0 if bath_type == "toilet_only" or has_kit else west_win_y0
         if has_kit:
@@ -623,8 +661,9 @@ def second_floor():
 
     ax.add_patch(Rectangle((0, 0), f["main_block_ext_width"], f["main_block_ext_depth"],
                            fill=False, edgecolor="#999999", lw=1.0, linestyle=":", zorder=0))
+    flush_note_x = bal_xmax + 8 if s.get("balcony") else x0 + W + 8
     if flush:
-        ax.text(x0 + W + 8, D / 2, "walls flush\nwith 1st floor\n(5' setback)",
+        ax.text(flush_note_x, D / 2, "walls flush\nwith 1st floor\n(5' setback)",
                 ha="left", va="center", fontsize=7.5, color="#2f7d2f")
     else:
         ax.text(off - 6, f["main_block_ext_depth"] / 2, "first floor\nbelow\n(4'-0\" offset)",
@@ -661,7 +700,7 @@ def second_floor():
             lw=1.4, linestyle="--")
 
     compass(ax, -12 * setback_ft - 40, -70)
-    ax.set_xlim(-12 * setback_ft - 80, max(x0 + W, xmax) + 90)
+    ax.set_xlim(-12 * setback_ft - 80, max(x0 + W, xmax, bal_xmax) + 90)
     ax.set_ylim(-120, sy + 50)
     fig.savefig(out_path("second-floor-plan.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -764,6 +803,16 @@ def site_plan():
     ax.text(sx + sw2 / 2, ay + ad / 2 + 3.5, label, ha="center",
             fontsize=8, color="#1d4ed8")
 
+    if sec.get("balcony"):
+        bd_ft = sec.get("balcony_depth", 48) / 12.0
+        bw_ft = sec.get("balcony_width", 120) / 12.0
+        # center on west face of addition (x increases west)
+        by0 = ay + (ad - bw_ft) / 2
+        ax.add_patch(Rectangle((e_gf + aw, by0), bd_ft, bw_ft,
+                               facecolor="#c8b89a", edgecolor="#6b5a3e", lw=1.0))
+        ax.text(e_gf + aw + bd_ft / 2, by0 + bw_ft / 2, "BALCONY",
+                ha="center", va="center", fontsize=6.5, color="#3d2e1a")
+
     g = stair_geom()
     draw_stair_site(ax, g, e_gf, ay)
 
@@ -810,6 +859,9 @@ def south_elevation():
         "straight": "straight exterior stair rises west → east to second-floor entry",
         "spiral": "spiral stair at SE entry (people); furniture via west-wall window",
     }[shape]
+    if sec.get("west_slider") and sec.get("balcony"):
+        subtitle = ("spiral stair at SE entry; west sliding doors onto balcony"
+                    if shape == "spiral" else subtitle + "; west slider + balcony")
 
     fig, ax = plt.subplots(figsize=(12, 8))
     ax.set_title(f"South elevation (from backyard, looking north) — east on RIGHT\n{subtitle}",
@@ -850,6 +902,17 @@ def south_elevation():
                            facecolor="#dfeefb", edgecolor="#4a6172", lw=1))
     ax.text(xd(W1 / 2 - off / 2), ff + 20, "bedroom egress", ha="center",
             fontsize=7, color="#4a6172")
+
+    if sec.get("balcony"):
+        bd = sec.get("balcony_depth", 48)
+        # balcony projects west past 2nd-floor west face (left on this drawing)
+        bx = off + W2
+        ax.add_patch(Rectangle((xd(bx + bd), sf - 4), bd, 10, facecolor="#8a7355",
+                               edgecolor="#553311", lw=1.0, zorder=5))
+        ax.plot([xd(bx + bd), xd(bx + bd)], [sf, sf + 42], color="#555555", lw=1.2, zorder=5)
+        ax.plot([xd(bx), xd(bx + bd)], [sf + 42, sf + 42], color="#555555", lw=1.2, zorder=5)
+        ax.text(xd(bx + bd / 2), sf + 50, "balcony", ha="center", fontsize=7,
+                color="#3d2e1a")
 
     if shape == "straight":
         run = g["tread"]
@@ -966,6 +1029,9 @@ def west_elevation():
         "straight": "straight stair wraps past SW corner (end view)",
         "spiral": "spiral at SE (dashed, far side); west furniture window",
     }[shape]
+    if sec.get("west_slider") and sec.get("balcony"):
+        subtitle = ("spiral at SE (dashed); west sliding doors onto balcony"
+                    if shape == "spiral" else subtitle + "; west slider + balcony")
     if flush:
         subtitle = subtitle + "; flush walls @ 5' setback (ADU)"
     elif abs(cant_in) >= 2:
@@ -1011,7 +1077,36 @@ def west_elevation():
     ax.add_patch(Rectangle((0, sf - fl), D, fl + c2 + 8, facecolor="#dfd2ba",
                            edgecolor="#555555", lw=1.2, zorder=3))
 
-    if sec.get("furniture_window"):
+    if sec.get("west_slider"):
+        sw = sec.get("west_slider_width", 72)
+        sh = sec.get("west_slider_height", 80)
+        # Align with studio portion of west wall (south of bath/kitchenette)
+        bathd = sec.get("bath_interior_depth", 60)
+        sy0 = EXT + bathd + INT + 16
+        if sec.get("kitchenette"):
+            sy0 = EXT + bathd + INT + 16
+        ax.add_patch(Rectangle((sy0, sf), sw, sh, facecolor="#b8d4f0",
+                               edgecolor="#1d4ed8", lw=1.5, zorder=4))
+        ax.plot([sy0 + sw / 2, sy0 + sw / 2], [sf, sf + sh],
+                color="#1d4ed8", lw=1.2, zorder=5)
+        ax.text(sy0 + sw / 2, sf + sh / 2,
+                f"SLIDING DOORS\n{ft_in(sw)} × {ft_in(sh)}",
+                ha="center", va="center", fontsize=8, color="#0b3d91", zorder=5)
+        if sec.get("balcony"):
+            bw = sec.get("balcony_width", 120)
+            bd = sec.get("balcony_depth", 48)
+            by = sy0 + sw / 2 - bw / 2
+            by = max(EXT, min(by, D - EXT - bw))
+            # deck edge toward viewer + guard
+            ax.add_patch(Rectangle((by - 2, sf - 8), bw + 4, 10, facecolor="#8a7355",
+                                   edgecolor="#553311", lw=1.0, zorder=6))
+            ax.plot([by, by + bw], [sf + 42, sf + 42], color="#333333", lw=1.6, zorder=6)
+            ax.plot([by, by], [sf, sf + 42], color="#333333", lw=1.4, zorder=6)
+            ax.plot([by + bw, by + bw], [sf, sf + 42], color="#333333", lw=1.4, zorder=6)
+            ax.text(by + bw / 2, sf + 52,
+                    f"BALCONY  {ft_in(bw)} wide × {ft_in(bd)} deep  ·  guard 42\"",
+                    ha="center", fontsize=7.5, color="#3d2e1a", zorder=6)
+    elif sec.get("furniture_window"):
         fw = sec.get("furniture_window_width", 72)
         fh = sec.get("furniture_window_height", 60)
         sill = sf + sec.get("furniture_window_sill", 24)

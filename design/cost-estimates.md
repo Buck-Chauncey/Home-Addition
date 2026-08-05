@@ -5,19 +5,20 @@
 
 ## Summary comparison
 
-| | **V0** | **L stair** | **spiral_stairs** | **lean** | **ADU** |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| New gross floor area | ~595 sf | ~595 sf | ~595 sf | ~501 sf | **~528 sf** |
-| Footprint | ~327 sf | ~327 sf | ~327 sf | ~276 sf | **~276 sf** |
-| 2nd fl east setback | 9′ inset | 9′ inset | 9′ inset | 9′ inset | **5′ flush** |
-| Upstairs | Full bath | Full bath | Full bath | Toilet only | **Full bath + kitchenette** |
-| Yard door | 6′ slider | 6′ slider | 6′ slider | 5′ doubles | **5′ doubles** |
-| Stair | Straight | L | Spiral | Spiral | **Spiral** |
-| **Low total** | **≈ $298k** | **≈ $299k** | **≈ $292k** | **≈ $210k** | **≈ $240k** |
-| **High total** | **≈ $482k** | **≈ $484k** | **≈ $476k** | **≈ $355k** | **≈ $400k** |
+| | **V0** | **L stair** | **spiral_stairs** | **lean** | **ADU** | **ADU balcony** |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| New gross floor area | ~595 sf | ~595 sf | ~595 sf | ~501 sf | **~528 sf** | **~528 sf** |
+| Footprint | ~327 sf | ~327 sf | ~327 sf | ~276 sf | **~276 sf** | **~276 sf** |
+| 2nd fl east setback | 9′ inset | 9′ inset | 9′ inset | 9′ inset | **5′ flush** | **5′ flush** |
+| Upstairs | Full bath | Full bath | Full bath | Toilet only | **Full bath + kitchenette** | **+ west balcony** |
+| Yard door | 6′ slider | 6′ slider | 6′ slider | 5′ doubles | **5′ doubles** | **5′ doubles** |
+| Stair | Straight | L | Spiral | Spiral | **Spiral** | **Spiral** |
+| **Low total** | **≈ $298k** | **≈ $299k** | **≈ $292k** | **≈ $210k** | **≈ $240k** | **≈ $250k** |
+| **High total** | **≈ $482k** | **≈ $484k** | **≈ $476k** | **≈ $355k** | **≈ $400k** | **≈ $420k** |
 
 **Lean** is cheapest. **ADU** adds kitchenette + full upstairs bath and uses flush
 5′ walls (wider 2nd floor, no cantilever) — confirm ADU setbacks with Planning.
+**ADU balcony** swaps the west furniture window for a 6′ slider onto a 10′×4′ deck.
 
 ---
 
@@ -134,6 +135,25 @@ verify with Richmond Building; not assumed in the numbers above.
 
 ---
 
+## ADU + balcony — west slider + 10′×4′ deck
+
+Same ADU shell and program; west furniture window replaced by **6′×6′-8″
+sliding doors** onto a **10′×4′ balcony** (guard 42″).
+
+| Line item | Low | High |
+| --- | ---: | ---: |
+| ADU total (from above) | $240,000 | $400,000 |
+| Replace furniture window with 6′ slider (net) | $1,000 | $3,000 |
+| Balcony framing, decking, waterproofing, flashing | $6,000 | $12,000 |
+| Guard / railing (42″) | $2,000 | $5,000 |
+| Contingency on balcony package (~10%) | $1,000 | $2,000 |
+| **ADU + balcony total** | **≈ $250,000** | **≈ $420,000** |
+
+Confirm side-yard projection rules with Planning; this lot has ample clearance
+to the west property line.
+
+---
+
 ## Further cuts (any variant)
 
 1. Owner-GC / self-perform paint, floors, some finish  
@@ -150,8 +170,10 @@ verify with Richmond Building; not assumed in the numbers above.
 | [`spiral_stairs/`](spiral_stairs/) | Spiral + 6′×5′ furniture window, full program |
 | [`lean/`](lean/) | **Smaller shell, shower bath, upstairs toilet only, spiral, 5′ double doors** |
 | [`ADU/`](ADU/) | **Flush 5′ walls; upstairs studio ADU (kitchenette + full bath); spiral** |
+| [`ADU_balcony/`](ADU_balcony/) | **ADU + west 6′ slider onto 10′×4′ balcony** |
 
 ```bash
+python3 generate_plans.py --params ADU_balcony/params.json --out ADU_balcony
 python3 generate_plans.py --params ADU/params.json --out ADU
 python3 generate_plans.py --params lean/params.json --out lean
 python3 generate_plans.py --params "L stair/params.json" --out "L stair"
