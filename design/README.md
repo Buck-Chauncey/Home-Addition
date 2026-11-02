@@ -29,4 +29,6 @@ python3 generate_plans.py --params spiral_stairs/params.json --out spiral_stairs
 ```
 
 Existing-house reference: [`../existing-house/`](../existing-house/).  
-Owner sketches: [`../sketches/`](../sketches/).
+Owner sketches: [`../sketches/`](../sketches/).  
+Parcel and RL2 envelope: [`../property/`](../property/).  
+ADU balcony fit against those standards: [`ADU_balcony/fit-check.md`](ADU_balcony/fit-check.md).

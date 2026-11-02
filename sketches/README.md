@@ -51,11 +51,11 @@ Approximate second-story floor plate: ~310 sq ft.
   ground-floor side yard, ~4.6′ short of the 9′ upper-story side yard if built flush.
 - FAR budget remaining ≈ 1,658 sq ft; this sketch uses ~660 sq ft. Comfortable margin.
 
-## Open questions (pending owner answers)
+## Status of the original open questions
 
-1. Confirm sketch orientation (bottom = house/Panama side, left = east).
-2. How the second story stacks on the first floor given the 9′ upper side setback.
-3. Distance from existing rear wall to rear property line (rear setback check).
-4. Exterior staircase location and direction of travel.
-5. Flush-east (variance/AUP) vs. conforming pull-in at ground floor.
-6. Ceiling heights, finish level, and budget target for cost modeling.
+1. **Orientation — answered.** Owner confirmed Panama Ave is north of the house. Left from the street is east. These drawings keep bottom = north, left = east.
+2. **Second-story stack — drawn both ways.** Primary-addition variants inset the upper floor to the 9′ side yard. ADU variants keep both floors flush at 5′ (confirm with Planning).
+3. **Rear yard — checked on the assumed site plan, not surveyed.** With a 20′ front setback and a 30.5′ house, the ADU balcony addition leaves about 31.5′ of rear yard. See [`../design/ADU_balcony/fit-check.md`](../design/ADU_balcony/fit-check.md).
+4. **Stair — drawn.** Straight (V0), L around the southwest corner, or a Ø5′ spiral at the southeast entry (lean / ADU).
+5. **Flush east wall — not as-of-right for a primary addition.** Measured east wall is 52.5″ (4.375′). Conforming ground floor pulls in 7.5″ to 5′. Upper floor pulls in to 9′ unless an ADU setback applies.
+6. **Ceilings and budget — used in the current drawings.** First floor 9′, second floor 8′, mid-range finishes. Cost ranges are in [`../design/cost-estimates.md`](../design/cost-estimates.md).

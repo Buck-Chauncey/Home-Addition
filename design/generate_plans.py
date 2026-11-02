@@ -342,14 +342,26 @@ def first_floor():
 
     door_lbl = (f'{ft_in(door_w)} DOUBLE DOORS → backyard' if yard_door == "double"
                 else f'{ft_in(door_w)} DOUBLE SLIDER → backyard')
-    title = (
-        f"First floor — LEAN: bedroom + shower bath; dining corridor with {door_lbl.split('→')[0].strip()}\n"
-        f"east face at 5'-0\" setback; {f['ceiling_height_ft']:.0f}'-0\" ceilings; "
-        f"main block {ft_in(W)} × {ft_in(D)}"
-        if lean else
-        "First floor — bedroom + full bath + E-W closet; wide corridor off the DINING ROOM\n"
-        f"with {door_lbl}; east face at 5'-0\" setback; 9'-0\" ceilings"
-    )
+    adu_below = P.get("second_floor", {}).get("kitchenette", False)
+    if adu_below:
+        title = (
+            f"First floor — primary bedroom under the ADU; dining corridor with "
+            f"{door_lbl.split('→')[0].strip()}\n"
+            f"east face at 5'-0\" setback; {f['ceiling_height_ft']:.0f}'-0\" ceilings; "
+            f"main block {ft_in(W)} × {ft_in(D)}"
+        )
+    elif lean:
+        title = (
+            f"First floor — LEAN: bedroom + shower bath; dining corridor with "
+            f"{door_lbl.split('→')[0].strip()}\n"
+            f"east face at 5'-0\" setback; {f['ceiling_height_ft']:.0f}'-0\" ceilings; "
+            f"main block {ft_in(W)} × {ft_in(D)}"
+        )
+    else:
+        title = (
+            "First floor — bedroom + full bath + E-W closet; wide corridor off the DINING ROOM\n"
+            f"with {door_lbl}; east face at 5'-0\" setback; 9'-0\" ceilings"
+        )
     fig, ax = base_axes(title)
 
     iw, idp = W - 2 * EXT, D - 2 * EXT
@@ -566,8 +578,9 @@ def second_floor():
         # bath fill (fixture labels only — room name would collide in this small bath)
         ax.add_patch(Rectangle((x0 + EXT, EXT), bathw, bathd,
                                facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
-        ax.text(x0 + EXT + 2, EXT + bathd - 6, f"{ft_in(bathw)}×{ft_in(bathd)}",
-                ha="left", va="top", fontsize=6, zorder=5, color="#666666")
+        ax.text(x0 + EXT + bathw - 8, EXT + bathd - 22,
+                f"{ft_in(bathw)} × {ft_in(bathd)}",
+                ha="right", va="center", fontsize=6, zorder=5, color="#666666")
         # kitchenette fill
         ax.add_patch(Rectangle((x0 + EXT + bathw + INT, EXT), kit_w, kit_d,
                                facecolor=ROOM_COLOR, edgecolor="none", zorder=1))
@@ -577,7 +590,7 @@ def second_floor():
         ax.add_patch(Rectangle((x0 + EXT + bathw + INT, y_kit + INT), kit_w,
                                bathd - kit_d, facecolor=ROOM_COLOR,
                                edgecolor="none", zorder=1))
-        ax.text(x0 + EXT + iw / 2, y_bath + INT + (idp - bathd - INT) / 2 + 20,
+        ax.text(x0 + EXT + iw / 2, y_bath + INT + (idp - bathd - INT) / 2,
                 f"ADU STUDIO\nliving / sleeping\n{ft_in(iw)} wide",
                 ha="center", va="center", fontsize=10, zorder=5, color="#333333")
         fixture(ax, x0 + EXT, EXT + 4, 34, 34, "SHWR", fs=6)
@@ -593,10 +606,12 @@ def second_floor():
                                edgecolor="#4a6172", lw=0.8, zorder=4))
         ax.add_patch(Rectangle((kx + kit_w - 26, EXT), 24, 22, facecolor=FIXTURE_COLOR,
                                edgecolor="#4a6172", lw=0.8, zorder=4))
-        ax.text(x0 + EXT + bathw + INT + kit_w / 2, y_bath + INT + 22,
-                f"KITCHENETTE  {ft_in(kit_w)}×{ft_in(kit_d)}  (sink · cook · fridge)",
-                ha="center", va="bottom", fontsize=6.5, zorder=5, color="#333333")
-        fixture(ax, x0 + EXT + iw - 70, y_bath + INT + 56, 60, 28, "BED / SOFA")
+        # Caption sits in the strip between the kitchenette and the studio,
+        # not across the bed/sofa.
+        ax.text(kx + kit_w / 2, (y_kit + INT + y_bath) / 2,
+                f"KITCHENETTE\n{ft_in(kit_w)} × {ft_in(kit_d)}\nsink · cook · fridge",
+                ha="center", va="center", fontsize=6, zorder=5, color="#333333")
+        fixture(ax, x0 + EXT + 18, D - EXT - 42, 64, 30, "BED / SOFA")
         west_win_y0 = y_bath + INT + 24
         west_win_span = idp - bathd - INT - 48
         ax.text(x0 + EXT + 4, -52, "ADU — confirm CA/Richmond ADU standards with Planning",
@@ -729,15 +744,17 @@ def second_floor():
     setback_ft = P["setbacks"]["east_pl_to_addition_upper_face_ft"]
     ax.annotate("", xy=(-12 * setback_ft, sy), xytext=(x0, sy),
                 arrowprops=dict(arrowstyle="<->", color="#b00000", lw=1.2))
-    ax.text(x0 - 6 * setback_ft, sy + 6,
+    # Keep the words left of the property line so the dashed line does not
+    # strike through "side".
+    ax.text(-12 * setback_ft - 8, sy,
             f"{setback_ft:.0f}'-0\" side setback"
             + (" (flush ADU)" if flush else ""),
-            ha="center", fontsize=8, color="#b00000")
+            ha="right", va="center", fontsize=8, color="#b00000")
     ax.plot([-12 * setback_ft, -12 * setback_ft], [-50, sy + 30], color="#b00000",
             lw=1.4, linestyle="--")
 
     compass(ax, -12 * setback_ft - 40, -70)
-    ax.set_xlim(-12 * setback_ft - 80, max(x0 + W, xmax, bal_xmax) + 90)
+    ax.set_xlim(-12 * setback_ft - 150, max(x0 + W, xmax, bal_xmax) + 90)
     ax.set_ylim(-120, sy + 50)
     fig.savefig(out_path("second-floor-plan.png"), dpi=140, bbox_inches="tight")
     plt.close(fig)
@@ -1249,6 +1266,8 @@ def run_all():
     print(f"New gross floor area:  {gross:.0f} sq ft")
     print(f"FAR: 842 + {gross:.0f} = {842+gross:.0f} / 2500")
     print(f"Ridge ≈ {a4['ridge_ft']:.1f} ft")
+    print(f"Rear yard remaining: {a3['rear_yard_remaining_ft']:.1f} ft "
+          f"(addition rear face at {a3['addition_rear_extent_ft']:.1f} ft from front line)")
     return {"a1": a1, "a2": a2, "a3": a3, "a4": a4, "a5": a5, "gross": gross}
 
 
