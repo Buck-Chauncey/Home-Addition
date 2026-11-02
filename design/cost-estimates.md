@@ -149,8 +149,9 @@ sliding doors** onto a **10′×4′ balcony** (guard 42″).
 | Contingency on balcony package (~10%) | $1,000 | $2,000 |
 | **ADU + balcony total** | **≈ $250,000** | **≈ $420,000** |
 
-Confirm side-yard projection rules with Planning; this lot has ample clearance
-to the west property line.
+The balcony faces west from the rear addition and stays about 27′ clear of the
+west property line (it is in the rear yard, not the west side yard). Confirm
+projection rules with Planning. See [`ADU_balcony/fit-check.md`](ADU_balcony/fit-check.md).
 
 ---
 

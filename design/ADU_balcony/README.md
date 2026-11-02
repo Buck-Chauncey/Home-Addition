@@ -5,8 +5,9 @@ Same studio ADU program as [`ADU/`](../ADU/), but the west wall opens with
 furniture-access window). Spiral access; **flush 5′ east walls**.
 
 > **Confirm with Richmond Planning** that ADU standards apply (flush 5′ side
-> walls) and that a west balcony projection into the side yard is allowed
-> (guards 42″; this lot has ample clearance to the west PL).
+> walls). The balcony faces west but sits in the **rear yard**, about 27′ clear
+> of the west property line — it does not enter the west side yard. Guards 42″.
+> See [`fit-check.md`](fit-check.md).
 
 ## Program
 
@@ -39,7 +40,7 @@ Same as ADU / lean (king BR, shower bath, dining corridor, 5′ doubles).
 | Bath | 7′-6″ × 5′-0″ | 36×36 shower, WC, vanity |
 | Stair | Ø5′ spiral, 15 @ 9.33″ | CRC R311.7.10.1 |
 | West slider | 6′-0″ × 6′-8″ | Onto balcony |
-| Balcony | 10′-0″ × 4′-0″ | Guard 42″; projects west into side yard |
+| Balcony | 10′-0″ × 4′-0″ | Guard 42″; west face of the rear-yard addition, ~27′ from the west line |
 
 ## Cost
 
@@ -51,7 +52,7 @@ the furniture window line item.
 ## ADU + balcony checklist (verify with City)
 
 1. Same ADU checklist as [`ADU/`](../ADU/) (setbacks, occupancy, metering, spiral egress)
-2. Side-yard balcony projection / encroachment rules
+2. Whether a rear-yard balcony (not in the side yard) needs a projection exception
 3. Guard height and opening limits (CRC R312)
 4. Waterproofing / drainage at balcony-to-wall connection
 
